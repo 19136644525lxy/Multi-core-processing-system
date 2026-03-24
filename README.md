@@ -248,4 +248,4 @@ MCPS使用QSUP 1.0.0许可证，详见LICENSE文件。
 ## 联系方式
 
 - 作者：Qituo, Yifei
-- 项目地址：[Multi-core processing system](https://github.com/qituo/mcps)
+- 项目地址：[Multi-core processing system](https://github.com/19136644525lxy/Multi-core-processing-system)
