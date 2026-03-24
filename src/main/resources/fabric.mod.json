@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "mcps",
+	"version": "${version}",
+	"name": "Multi-core processing system",
+	"description": "None",
+	"authors": [
+		"Qituo",
+		"Yifei"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "QSUP 1.0.0",
+	"icon": "assets/mcps/textures/gui/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.qituo.mcps.core.MCPSMod"
+		],
+		"client": [
+			"com.qituo.mcps.client.MCPSClient"
+		],
+		"fabric-datagen": [
+			""
+		],
+		"modmenu": [
+			"com.qituo.mcps.config.ModMenuIntegration"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"mixins": [
+		"mcps.mixins.json"
+	]
+}

@@ -1,0 +1,500 @@
+[15:18:19] [Render thread/INFO]: Use NV_blend_equation_advanced_coherent
+[15:18:19] [Render thread/INFO]: OpenGL vendor: NVIDIA Corporation
+[15:18:19] [Render thread/INFO]: OpenGL renderer: NVIDIA GeForce RTX 4060/PCIe/SSE2
+[15:18:19] [Render thread/INFO]: OpenGL version: 4.6.0 NVIDIA 595.79
+[15:18:19] [Render thread/INFO]: OpenGL caps: 
+AnisotropySupport: true
+GpuTracingSupport: false
+ConservativeRasterSupport: true
+TextureBarrierSupport: true
+DepthClipNegativeOneToOne: true
+BlendEquationSupport: ADVANCED_COHERENT
+ClampToBorderSupport: true
+MaxRenderTargetSize: 32768
+MaxPreferredRenderTargetSize: 32768
+MaxVertexAttributes: 16
+MaxVertexBindings: 16
+MaxTextureSize: 32768
+MaxPushConstantsSize: 0
+MaxColorAttachments: 8
+MinUniformBufferOffsetAlignment: 256
+MinStorageBufferOffsetAlignment: 16
+ShaderCaps:
+	TargetAPI: OPENGL_4_5
+	GLSLVersion: GLSL_450
+	SPIRVVersion: null
+	FMASupport: true
+	DualSourceBlendingSupport: true
+	PreferFlatInterpolation: true
+	VertexIDSupport: true
+	InfinitySupport: true
+	NonConstantArrayIndexSupport: true
+	BitManipulationSupport: true
+	NoPerspectiveInterpolationSupport: true
+	ReducedShaderMode: false
+	TextureQueryLod: true
+	UseUniformBinding: true
+	UseVaryingLocation: true
+	UseBlockMemberOffset: true
+	UsePrecisionModifiers: false
+	RequiresLocalOutputColorForFBFetch: false
+	MustObfuscateUniformColor: false
+	MustWriteToFragColor: false
+	ColorSpaceMathNeedsFloat: false
+	AvoidDfDxForGradientsWhenPossible: false
+	SecondaryOutputExtension: null
+	AdvBlendEqInteraction: 1
+	MaxFragmentSamplers: 32
+Vendor: NVIDIA
+Driver: NVIDIA
+MaxFragmentUniformVectors: 1024
+MaxTextureMaxAnisotropy: 16.0
+SupportsProtected: false
+SkipErrorChecks: true
+MaxLabelLength: 256
+DebugSupport: true
+BufferStorageSupport: true
+DrawElementsBaseVertexSupport: true
+BaseInstanceSupport: true
+DSASupport: true
+InvalidateBufferType: 2
+InvalidateFramebufferSupport: true
+VertexAttribBindingSupport: true
+CopyImageSupport: true
+SPIRVSupport: false
+ViewCompatibilityClassSupport: true
+TexStorageSupport: true
+ProgramBinarySupport: true
+ProgramBinaryFormats: [36385]
+GLSLVersion: 460
+ColorTypeToBackendFormat:
+	UNKNOWN=>GLenum [0x0]
+	BGR_565=>RGB565
+	R_8=>R8
+	RG_88=>RG8
+	RGB_888=>RGB8
+	RGBX_8888=>GLenum [0x0]
+	RGBA_8888=>RGBA8
+	BGRA_8888=>RGBA8
+	RGBA_8888_SRGB=>SRGB8_ALPHA8
+	RGBA_1010102=>RGB10_A2
+	BGRA_1010102=>RGB10_A2
+	R_16=>GLenum [0x0]
+	R_F16=>GLenum [0x0]
+	RG_1616=>RG16
+	RG_F16=>RG16F
+	RGBA_16161616=>RGBA16
+	RGBA_F16=>RGBA16F
+	RGBA_F16_CLAMPED=>RGBA16F
+	RGBA_F32=>GLenum [0x0]
+	ALPHA_8=>R8
+	ALPHA_16=>R16
+	ALPHA_F16=>R16F
+	GRAY_8=>R8
+	GRAY_ALPHA_88=>RG8
+	ABGR_8888=>GLenum [0x0]
+	ARGB_8888=>GLenum [0x0]
+CompressionTypeToBackendFormat: [null, {mBackend=OpenGL, mFormat=ETC2}, {mBackend=OpenGL, mFormat=RGB8_BC1}, {mBackend=OpenGL, mFormat=RGBA8_BC1}]
+
+[15:18:19] [Render thread/INFO]: UI manager initialized
+[15:18:19] [Render thread/INFO]: Debug functionality is disabled.
+[15:18:19] [Render thread/INFO]: OpenGL 4.5 detected, enabling DSA.
+[15:18:19] [Render thread/INFO]: Shaders are disabled because enableShaders is set to false in iris.properties
+[15:18:19] [Render thread/INFO]: Starting initialization of Forge mods...
+[15:18:20] [Render thread/INFO]: Initialized new instance of mod cyclopscore.
+[15:18:20] [Render thread/INFO]: Initialized new instance of mod iconexporter.
+[15:18:20] [Render thread/INFO]: Forge mod loading, version 47.4.5, for MC 1.20.1 with MCP intermediary
+[15:18:20] [Render thread/INFO]: MinecraftForge v47.4.5 Initialized
+[15:18:20] [Render thread/INFO]: Initialized new instance of mod forge.
+[15:18:20] [Render thread/INFO]: [STDOUT]: running CREATE_REGISTRIES in GATHER
+[15:18:20] [Render thread/INFO]: [STDOUT]: running OBJECT_HOLDERS in GATHER
+[15:18:20] [Render thread/INFO]: [STDOUT]: running INJECT_CAPABILITIES in GATHER
+[15:18:20] [Render thread/INFO]: [STDOUT]: running UNFREEZE_DATA in GATHER
+[15:18:20] [Render thread/INFO]: [STDOUT]: running LOAD_REGISTRIES in GATHER
+[15:18:20] [Render thread/WARN]: Mixin kilt_forge_injects.mixins.json:client.resources.model.SimpleBakedModelInject from mod kilt has multiple constructors, <init>(Ljava/util/List;Ljava/util/Map;ZZZLnet/minecraft/class_1058;Lnet/minecraft/class_809;Lnet/minecraft/class_806;)V was selected
+[15:18:20] [Render thread/WARN]: Mixin kilt_forge_injects.mixins.json:client.resources.model.SimpleBakedModelInject from mod kilt has multiple constructors, <init>(Ljava/util/List;Ljava/util/Map;ZZZLnet/minecraft/class_1058;Lnet/minecraft/class_809;Lnet/minecraft/class_806;)V was selected
+[15:18:20] [Render thread/WARN]: Mixin kilt_forge_injects.mixins.json:client.renderer.texture.SpriteContentsInject from mod kilt has multiple constructors, <init>(Lnet/minecraft/class_2960;Lnet/minecraft/class_7771;Lnet/minecraft/class_1011;Lnet/minecraft/class_1079;)V was selected
+[15:18:20] [Render thread/WARN]: Mixin kilt_forge_injects.mixins.json:client.renderer.block.model.ItemOverridesInject from mod kilt has multiple constructors, <init>(Lnet/minecraft/class_7775;Lnet/minecraft/class_1100;Ljava/util/List;)V was selected
+[15:18:20] [Render thread/WARN]: Discarding @Unique public method setAnglesInternal in porting_lib_base.mixins.json:client.CameraMixin from mod porting_lib_base because it already exists in net.minecraft.class_4184
+[15:18:20] [Render thread/WARN]: Discarding @Unique public method getBlockAtCamera in porting_lib_base.mixins.json:client.CameraMixin from mod porting_lib_base because it already exists in net.minecraft.class_4184
+[15:18:20] [Render thread/INFO]: Hardware information:
+[15:18:20] [Render thread/INFO]: CPU: 20x Intel(R) Core(TM) i5-14600KF
+[15:18:20] [Render thread/INFO]: GPU: NVIDIA GeForce RTX 4060/PCIe/SSE2 (Supports OpenGL 4.6.0 NVIDIA 595.79)
+[15:18:20] [Render thread/INFO]: OS: Windows 11 (10.0)
+[15:18:20] [Render thread/WARN]: Method overwrite conflict for getTicks in Kilt.mixins.json:LevelRendererAccessor from mod kilt, previously written by xyz.bluspring.kilt.forgeinjects.client.renderer.LevelRendererInject. Skipping method.
+[15:18:20] [Render thread/WARN]: Method overwrite conflict for getFrustum in sodium-extra.mixins.json:optimizations.beacon_beam_rendering.WorldRendererAccessor from mod sodium-extra, previously written by xyz.bluspring.kilt.forgeinjects.client.renderer.LevelRendererInject. Skipping method.
+[15:18:21] [Render thread/INFO]: [Conditions] JavaScript engine: OpenJDK Nashorn (15.4)
+[15:18:21] [Render thread/INFO]: [BiomeConditions] JavaScript engine: OpenJDK Nashorn (15.4)
+[15:18:21] [UI thread/INFO]: UI thread initialized in 1878ms
+[15:18:21] [Render thread/INFO]: Preloaded modern text shaders
+[15:18:21] [Render thread/INFO]: Reloading ResourceManager: vanilla, fabric (appleskin, asmfabricloader, caffeineconfig, cloth-config, dsurround, dynamiccrosshair, dynamiccrosshair-api, dynamiccrosshaircompat, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-containers-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-events-lifecycle-v0, fabric-game-rule-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-language-kotlin, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-tables-v1, fabric-message-api-v1, fabric-mining-level-api-v1, fabric-model-loading-api-v1, fabric-models-v0, fabric-networking-api-v1, fabric-networking-v0, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, forgeconfigapiport, imblocker, indium, iris, jade, jei, kilt, knit-loader, libbamboo, mcps, mm, modernui, modmenu, porting_lib_accessors, porting_lib_asm, porting_lib_attributes, porting_lib_base, porting_lib_blocks, porting_lib_brewing, porting_lib_chunk_loading, porting_lib_client_events, porting_lib_common, porting_lib_config, porting_lib_core, porting_lib_data, porting_lib_entity, porting_lib_extensions, porting_lib_fluids, porting_lib_gametest, porting_lib_gui_utils, porting_lib_items, porting_lib_lazy_registration, porting_lib_level_events, porting_lib_loot, porting_lib_mixin_extensions, porting_lib_model_builders, porting_lib_model_generators, porting_lib_model_loader, porting_lib_model_materials, porting_lib_models, porting_lib_networking, porting_lib_obj_loader, porting_lib_recipe_book_categories, porting_lib_registries, porting_lib_tags, porting_lib_tool_actions, porting_lib_transfer, porting_lib_utility, reach-entity-attributes, reeses-sodium-options, sodium, sodium-extra, team_reborn_energy, xaerolib, xaerominimap, xaeroworldmap, xbob, ygd, cyclopscore, iconexporter, forge)
+[15:18:21] [Render thread/INFO]: Modern UI client config loaded/reloaded
+[15:18:21] [Thread-88/INFO]: Modern UI client config loaded/reloaded
+[15:18:21] [Render thread/INFO]: Loaded smart SDF text shaders
+[15:18:21] [Render thread/INFO]: Modern UI text config loaded/reloaded
+[15:18:21] [Render thread/INFO]: Modern UI common config loaded/reloaded
+[15:18:21] [Render thread/WARN]: @Inject(@At("INVOKE")) Shift.BY=2 on kilt_forge_injects.mixins.json:recipebook.PlaceRecipeInject from mod kilt::handler$cfa000$kilt$tryUseForgeShapedRecipeCheck exceeds the maximum allowed value: 0. Increase the value of maxShiftBy to suppress this warning.
+[15:18:21] [Render thread/WARN]: @Inject(@At("INVOKE")) Shift.BY=2 on kilt_forge_injects.mixins.json:server.PlayerAdvancementsInject from mod kilt::handler$cfg000$kilt$callAdvancementProgressed exceeds the maximum allowed value: 0. Increase the value of maxShiftBy to suppress this warning.
+[15:18:21] [Render thread/WARN]: @Inject(@At("INVOKE")) Shift.BY=2 on kilt_forge_injects.mixins.json:server.PlayerAdvancementsInject from mod kilt::handler$cfg000$kilt$callAdvancementProgressedRevoke exceeds the maximum allowed value: 0. Increase the value of maxShiftBy to suppress this warning.
+[15:18:21] [Worker-Main-16/INFO]: Scanned emoji shortcodes: 6923
+[15:18:21] [Worker-Main-15/INFO]: Scanned emoji map size: 3581
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font 'minecraft:alt' in pack: 'vanilla'
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font bundle: 'minecraft:font/alt.json', font set: [minecraft:include/space,minecraft:font/ascii_sga.png]
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font 'minecraft:default' in pack: 'vanilla'
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font bundle: 'minecraft:font/default.json', font set: [minecraft:include/space,minecraft:include/default]
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font 'minecraft:illageralt' in pack: 'vanilla'
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font bundle: 'minecraft:font/illageralt.json', font set: [minecraft:include/space,minecraft:font/asciillager.png]
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font 'minecraft:include/default' in pack: 'vanilla'
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font bundle: 'minecraft:font/include/default.json', font set: [minecraft:font/nonlatin_european.png,minecraft:font/accented.png,minecraft:font/ascii.png]
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font 'minecraft:include/space' in pack: 'vanilla'
+[15:18:21] [Worker-Main-14/INFO]: Loaded raw font bundle: 'minecraft:font/include/space.json', font set: [minecraft:include/space / minecraft:space]
+[15:18:21] [Worker-Main-14/INFO]: Loaded font: 'minecraft:include/space', font set: [minecraft:include/space / minecraft:space]
+[15:18:21] [Worker-Main-14/INFO]: Loaded font: 'minecraft:include/default', font set: [minecraft:font/nonlatin_european.png,minecraft:font/accented.png,minecraft:font/ascii.png]
+[15:18:21] [Worker-Main-14/INFO]: Loaded font: 'minecraft:default', font set: [minecraft:include/space / minecraft:space,minecraft:font/nonlatin_european.png,minecraft:font/accented.png,minecraft:font/ascii.png]
+[15:18:21] [Worker-Main-14/INFO]: Loaded font: 'minecraft:illageralt', font set: [minecraft:include/space / minecraft:space,minecraft:font/asciillager.png]
+[15:18:21] [Worker-Main-14/INFO]: Loaded font: 'minecraft:alt', font set: [minecraft:include/space / minecraft:space,minecraft:font/ascii_sga.png]
+[15:18:21] [Worker-Main-5/WARN]: Texture ygd:item/hardened_rough_stone_pickaxe with size 128x117 limits mip level from 4 to 0
+[15:18:21] [Render thread/INFO]: Creating pipeline for dimension minecraft:overworld
+[15:18:21] [Render thread/INFO]: Client starting
+[15:18:21] [Render thread/INFO]: [dsurround] Completing initialization
+[15:18:21] [Render thread/INFO]: [dsurround] Finalization complete
+[15:18:21] [Render thread/INFO]: Start loading plugin from Jade
+[15:18:21] [Render thread/INFO]: Start loading plugin from Jade
+[15:18:21] [Render thread/INFO]: Start loading plugin from Jade
+[15:18:21] [Render thread/INFO]: UI renderer initialized
+[15:18:21] [Render thread/ERROR]: Registry 'porting_lib:global_loot_modifier_serializers' was empty after loading
+[15:18:21] [Render thread/ERROR]: Registry 'forge:entity_data_serializers' was empty after loading
+[15:18:21] [Render thread/INFO]: Loading Xaero's World Map - Stage 2/2
+[15:18:21] [Render thread/INFO]: New world map region cache hash code: -1578492949
+[15:18:22] [Worker-Main-1/WARN]: Mixin kilt_forge_injects.mixins.json:client.renderer.block.model.BakedQuadInject from mod kilt has multiple constructors, <init>([IILnet/minecraft/class_2350;Lnet/minecraft/class_1058;Z)V was selected
+[15:18:22] [Render thread/ERROR]: io exception while checking versions: Read timed out
+[15:18:22] [Render thread/INFO]: Registered player tracker system: map_synced
+[15:18:22] [Render thread/INFO]: Xaero's WorldMap Mod: Xaero's minimap found!
+[15:18:22] [Render thread/INFO]: Registered player tracker system: minimap_synced
+[15:18:22] [Render thread/INFO]: No Optifine!
+[15:18:22] [Render thread/INFO]: Xaero's World Map: No Vivecraft!
+[15:18:22] [Render thread/INFO]: Xaero's World Map: Iris found!
+[15:18:22] [Render thread/INFO]: Reloaded glyph manager
+[15:18:22] [Render thread/INFO]: Reloaded text layout engine, res level: 2 to 2, locale: zh_CN, layout RTL: false
+[15:18:22] [Render thread/INFO]: Loading Xaero's Minimap - Stage 2/2
+[15:18:23] [Render thread/WARN]: io exception while checking versions: Read timed out
+[15:18:23] [Render thread/INFO]: Registered player tracker system: minimap_synced
+[15:18:23] [Render thread/INFO]: Xaero's Minimap: World Map found!
+[15:18:23] [Render thread/INFO]: No Optifine!
+[15:18:23] [Render thread/INFO]: Xaero's Minimap: No Vivecraft!
+[15:18:23] [Render thread/INFO]: Xaero's Minimap: Iris found!
+[15:18:23] [Render thread/INFO]: Loading XaeroLib common 2/2!
+[15:18:23] [Render thread/INFO]: Loading XaeroLib client 2/2!
+[15:18:24] [Render thread/ERROR]: Unreported exception thrown!
+java.lang.NoClassDefFoundError: krash220/xbob/game/api/bus/GuiBus
+	at net.minecraft.class_757.handler$faf000$xbob_mixin$render(class_757.java:11126) ~[client-intermediary.jar:?]
+	at net.minecraft.class_757.method_3192(class_757.java) ~[client-intermediary.jar:?]
+	at net.minecraft.class_310.method_1523(class_310.java:1219) ~[client-intermediary.jar:?]
+	at net.minecraft.class_310.method_1514(class_310.java:802) ~[client-intermediary.jar:?]
+	at net.minecraft.client.main.Main.main(Main.java:250) ~[Fabric测试.jar:?]
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514) ~[fabric-loader-0.18.4.jar:?]
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72) ~[fabric-loader-0.18.4.jar:?]
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23) ~[fabric-loader-0.18.4.jar:?]
+	at jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:565) ~[?:?]
+	at oolloo.jlw.Wrapper.invokeMain(Wrapper.java:112) ~[JavaWrapper.jar:?]
+	at oolloo.jlw.Wrapper.main(Wrapper.java:105) ~[JavaWrapper.jar:?]
+Caused by: java.lang.ClassNotFoundException: krash220.xbob.game.api.bus.GuiBus
+	at jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:580) ~[?:?]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:490) ~[?:?]
+	at net.fabricmc.loader.impl.launch.knot.KnotClassDelegate.loadClass(KnotClassDelegate.java:239) ~[fabric-loader-0.18.4.jar:?]
+	at net.fabricmc.loader.impl.launch.knot.KnotClassLoader.loadClass(KnotClassLoader.java:119) ~[fabric-loader-0.18.4.jar:?]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:490) ~[?:?]
+	... 12 more
+[15:18:24] [Render thread/INFO]: Stopping JEI
+[15:18:24] [Render thread/INFO]: Stopping JEI
+[15:18:24] [Render thread/INFO]: Sending Runtime Unavailable...
+[15:18:24] [Render thread/INFO]: Stopping JEI GUI
+[15:18:24] [Render thread/INFO]: Sending Runtime Unavailable took 385.7 μs
+[15:18:24] [Render thread/FATAL]: Preparing crash report with UUID d2a94766-b0b7-4878-a74a-59d0c01a5f8e
+---- Minecraft Crash Report ----
+// I bet Cylons wouldn't have this problem.
+
+Time: 2026-03-24 15:18:24
+Description: Unexpected error
+
+java.lang.NoClassDefFoundError: krash220/xbob/game/api/bus/GuiBus
+	at knot//net.minecraft.class_757.handler$faf000$xbob_mixin$render(class_757.java:11126)
+	at knot//net.minecraft.class_757.method_3192(class_757.java)
+	at knot//net.minecraft.class_310.method_1523(class_310.java:1219)
+	at knot//net.minecraft.class_310.method_1514(class_310.java:802)
+	at knot//net.minecraft.client.main.Main.main(Main.java:250)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at oolloo.jlw.Wrapper.invokeMain(Wrapper.java:112)
+	at oolloo.jlw.Wrapper.main(Wrapper.java:105)
+Caused by: java.lang.ClassNotFoundException: krash220.xbob.game.api.bus.GuiBus
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:580)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	at net.fabricmc.loader.impl.launch.knot.KnotClassDelegate.loadClass(KnotClassDelegate.java:239)
+	at net.fabricmc.loader.impl.launch.knot.KnotClassLoader.loadClass(KnotClassLoader.java:119)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	... 12 more
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at knot//net.minecraft.class_757.handler$faf000$xbob_mixin$render(class_757.java:11126)
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: No
+	Packs: vanilla, fabric
+Stacktrace:
+	at knot//net.minecraft.class_6360.method_36565(class_6360.java:49)
+	at knot//net.minecraft.class_310.method_1587(class_310.java:2413)
+	at knot//net.minecraft.class_310.method_1514(class_310.java:826)
+	at knot//net.minecraft.client.main.Main.main(Main.java:250)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at oolloo.jlw.Wrapper.invokeMain(Wrapper.java:112)
+	at oolloo.jlw.Wrapper.main(Wrapper.java:105)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.20.1
+	Minecraft Version ID: 1.20.1
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 25.0.2, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 1222639616 bytes (1166 MiB) / 2908749824 bytes (2774 MiB) up to 8803844096 bytes (8396 MiB)
+	CPUs: 20
+	Processor Vendor: GenuineIntel
+	Processor Name: Intel(R) Core(TM) i5-14600KF
+	Identifier: Intel64 Family 6 Model 183 Stepping 1
+	Microarchitecture: unknown
+	Frequency (GHz): 3.49
+	Number of physical packages: 1
+	Number of physical CPUs: 14
+	Number of logical CPUs: 20
+	Graphics card #0 name: OrayIddDriver Device
+	Graphics card #0 vendor: Shanghai Best Oray Information Technology Co., Ltd.
+	Graphics card #0 VRAM (MB): 0.00
+	Graphics card #0 deviceId: unknown
+	Graphics card #0 versionInfo: DriverVersion=17.50.19.949
+	Graphics card #1 name: NVIDIA GeForce RTX 4060
+	Graphics card #1 vendor: NVIDIA (0x10de)
+	Graphics card #1 VRAM (MB): 4095.00
+	Graphics card #1 deviceId: 0x2882
+	Graphics card #1 versionInfo: DriverVersion=32.0.15.9579
+	Memory slot #0 capacity (MB): 16384.00
+	Memory slot #0 clockSpeed (GHz): 2.40
+	Memory slot #0 type: DDR4
+	Memory slot #1 capacity (MB): 16384.00
+	Memory slot #1 clockSpeed (GHz): 2.40
+	Memory slot #1 type: DDR4
+	Virtual memory max (MB): 40801.68
+	Virtual memory used (MB): 25098.54
+	Swap memory total (MB): 8192.00
+	Swap memory used (MB): 1609.84
+	JVM Flags: 11 total; -XX:ThreadPriorityPolicy=1 -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:-UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders -XX:+UseZGC -XX:-OmitStackTraceInFastThrow -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -Xmn1679m -Xmx8396m
+	Fabric Mods: 
+		appleskin: AppleSkin 2.5.2+mc1.20.1
+		architectury: Architectury 9.2.14
+		cloth-config: Cloth Config v11 11.1.136
+			cloth-basic-math: cloth-basic-math 0.6.1
+		dsurround: Dynamic Surroundings 0.3.3
+		dynamiccrosshair: Dynamic Crosshair 9.10
+			dynamiccrosshair-api: DynamicCrosshair API 1.2
+			libbamboo: LibBamboo 2.23
+		dynamiccrosshaircompat: Dynamic Crosshair Compat 4.4
+		fabric-api: Fabric API 0.92.7+1.20.1
+			fabric-api-base: Fabric API Base 0.4.32+1802ada577
+			fabric-api-lookup-api-v1: Fabric API Lookup API (v1) 1.6.37+1802ada577
+			fabric-biome-api-v1: Fabric Biome API (v1) 13.0.15+93aa238b77
+			fabric-block-api-v1: Fabric Block API (v1) 1.0.12+1802ada577
+			fabric-block-view-api-v2: Fabric BlockView API (v2) 1.0.3+924f046a77
+			fabric-blockrenderlayer-v1: Fabric BlockRenderLayer Registration (v1) 1.1.42+1802ada577
+			fabric-client-tags-api-v1: Fabric Client Tags 1.1.3+1802ada577
+			fabric-command-api-v1: Fabric Command API (v1) 1.2.35+f71b366f77
+			fabric-command-api-v2: Fabric Command API (v2) 2.2.14+1802ada577
+			fabric-commands-v0: Fabric Commands (v0) 0.2.52+df3654b377
+			fabric-containers-v0: Fabric Containers (v0) 0.1.67+df3654b377
+			fabric-content-registries-v0: Fabric Content Registries (v0) 4.0.13+1802ada577
+			fabric-convention-tags-v1: Fabric Convention Tags 1.5.6+1802ada577
+			fabric-crash-report-info-v1: Fabric Crash Report Info (v1) 0.2.20+1802ada577
+			fabric-data-attachment-api-v1: Fabric Data Attachment API (v1) 1.0.2+de0fd6d177
+			fabric-data-generation-api-v1: Fabric Data Generation API (v1) 12.3.7+1802ada577
+			fabric-dimensions-v1: Fabric Dimensions API (v1) 2.1.55+1802ada577
+			fabric-entity-events-v1: Fabric Entity Events (v1) 1.6.1+1c78457f77
+			fabric-events-interaction-v0: Fabric Events Interaction (v0) 0.6.5+13a40c6677
+			fabric-events-lifecycle-v0: Fabric Events Lifecycle (v0) 0.2.64+df3654b377
+			fabric-game-rule-api-v1: Fabric Game Rule API (v1) 1.0.41+1802ada577
+			fabric-item-api-v1: Fabric Item API (v1) 2.1.29+1802ada577
+			fabric-item-group-api-v1: Fabric Item Group API (v1) 4.0.14+1802ada577
+			fabric-key-binding-api-v1: Fabric Key Binding API (v1) 1.0.38+1802ada577
+			fabric-keybindings-v0: Fabric Key Bindings (v0) 0.2.36+df3654b377
+			fabric-lifecycle-events-v1: Fabric Lifecycle Events (v1) 2.2.23+1802ada577
+			fabric-loot-api-v2: Fabric Loot API (v2) 1.2.3+1802ada577
+			fabric-loot-tables-v1: Fabric Loot Tables (v1) 1.1.47+9e7660c677
+			fabric-message-api-v1: Fabric Message API (v1) 5.1.10+1802ada577
+			fabric-mining-level-api-v1: Fabric Mining Level API (v1) 2.1.52+1802ada577
+			fabric-model-loading-api-v1: Fabric Model Loading API (v1) 1.0.4+1802ada577
+			fabric-models-v0: Fabric Models (v0) 0.4.3+9386d8a777
+			fabric-networking-api-v1: Fabric Networking API (v1) 1.3.14+a158aa0477
+			fabric-networking-v0: Fabric Networking (v0) 0.3.54+df3654b377
+			fabric-object-builder-api-v1: Fabric Object Builder API (v1) 11.1.5+e35120df77
+			fabric-particles-v1: Fabric Particles (v1) 1.1.3+1802ada577
+			fabric-recipe-api-v1: Fabric Recipe API (v1) 1.0.24+1802ada577
+			fabric-registry-sync-v0: Fabric Registry Sync (v0) 2.3.6+1802ada577
+			fabric-renderer-api-v1: Fabric Renderer API (v1) 3.2.2+1802ada577
+			fabric-renderer-indigo: Fabric Renderer - Indigo 1.5.3+85287f9f77
+			fabric-renderer-registries-v1: Fabric Renderer Registries (v1) 3.2.47+df3654b377
+			fabric-rendering-data-attachment-v1: Fabric Rendering Data Attachment (v1) 0.3.39+92a0d36777
+			fabric-rendering-fluids-v1: Fabric Rendering Fluids (v1) 3.0.29+1802ada577
+			fabric-rendering-v0: Fabric Rendering (v0) 1.1.50+df3654b377
+			fabric-rendering-v1: Fabric Rendering (v1) 3.0.9+1802ada577
+			fabric-resource-conditions-api-v1: Fabric Resource Conditions API (v1) 2.3.9+1802ada577
+			fabric-resource-loader-v0: Fabric Resource Loader (v0) 0.11.12+fb82e9d777
+			fabric-screen-api-v1: Fabric Screen API (v1) 2.0.9+1802ada577
+			fabric-screen-handler-api-v1: Fabric Screen Handler API (v1) 1.3.33+1802ada577
+			fabric-sound-api-v1: Fabric Sound API (v1) 1.0.14+1802ada577
+			fabric-transfer-api-v1: Fabric Transfer API (v1) 3.3.6+8dd72ea377
+			fabric-transitive-access-wideners-v1: Fabric Transitive Access Wideners (v1) 4.3.2+1802ada577
+		fabric-language-kotlin: Fabric Language Kotlin 1.13.9+kotlin.2.3.10
+			org_jetbrains_kotlin_kotlin-reflect: kotlin-reflect 2.3.10
+			org_jetbrains_kotlin_kotlin-stdlib: kotlin-stdlib 2.3.10
+			org_jetbrains_kotlin_kotlin-stdlib-jdk7: kotlin-stdlib-jdk7 2.3.10
+			org_jetbrains_kotlin_kotlin-stdlib-jdk8: kotlin-stdlib-jdk8 2.3.10
+			org_jetbrains_kotlinx_atomicfu-jvm: atomicfu-jvm 0.31.0
+			org_jetbrains_kotlinx_kotlinx-coroutines-core-jvm: kotlinx-coroutines-core-jvm 1.10.2
+			org_jetbrains_kotlinx_kotlinx-coroutines-jdk8: kotlinx-coroutines-jdk8 1.10.2
+			org_jetbrains_kotlinx_kotlinx-datetime-jvm: kotlinx-datetime-jvm 0.7.1
+			org_jetbrains_kotlinx_kotlinx-io-bytestring-jvm: kotlinx-io-bytestring-jvm 0.8.2
+			org_jetbrains_kotlinx_kotlinx-io-core-jvm: kotlinx-io-core-jvm 0.8.2
+			org_jetbrains_kotlinx_kotlinx-serialization-cbor-jvm: kotlinx-serialization-cbor-jvm 1.10.0
+			org_jetbrains_kotlinx_kotlinx-serialization-core-jvm: kotlinx-serialization-core-jvm 1.10.0
+			org_jetbrains_kotlinx_kotlinx-serialization-json-jvm: kotlinx-serialization-json-jvm 1.10.0
+		fabricloader: Fabric Loader 0.18.4
+			mixinextras: MixinExtras 0.5.0
+		forgeconfigapiport: Forge Config API Port 8.0.3
+		imblocker: IMBlocker 5.4.6
+		indium: Indium 1.0.36+mc1.20.1
+		iris: Iris 1.7.6+mc1.20.1
+			io_github_douira_glsl-transformer: glsl-transformer 2.0.1
+			org_anarres_jcpp: jcpp 1.4.14
+			org_antlr_antlr4-runtime: antlr4-runtime 4.13.1
+		jade: Jade 11.13.1+fabric
+		java: Java HotSpot(TM) 64-Bit Server VM 25
+		jei: Just Enough Items 15.20.0.129
+		kilt: Kilt 20.1.13
+			asmfabricloader: AsmFabricLoader 1.3.2-SNAPSHOT
+				net_lenni0451_classtransform_core: core 1.14.1
+				net_lenni0451_reflect: Reflect 1.5.0
+			com_github_fabriccompatibilitylayers_cursedmixinextensions: CursedMixinExtensions 1.1.0
+			com_moulberry_mixinconstraints: mixinconstraints 1.0.8
+			commons-codec_commons-codec: commons-codec 1.15
+			cpw_mods_securejarhandler: securejarhandler fabric-2.1.6
+			kilt_create_compat: Kilt: Create Fabric Compat 1.0.0
+			kilt_curios_trinkets_compat: Kilt: Curios & Trinkets Compat 1.0.0
+			kilt_fabric_compat: Kilt: Fabric Mods Compat 1.0.0
+			kilt_forge_compat: Kilt: Forge Mods Compat 1.0.0
+			kilt_forge_config: Kilt: Forge Config API 8.1.0
+			kilt_transfer_compat: Kilt: Transfer API Compat 1.0.0
+			knit-loader: Knit Loader 0.1.0
+			mixinsquared: MixinSquared 0.3.3
+			mm: Manningham Mills 2.3
+			net_fabricmc_tiny-mappings-parser: tiny-mappings-parser 0.3.0+build.17
+			net_fabricmc_tiny-remapper: tiny-remapper 0.11.1
+			net_jodah_typetools: typetools 0.8.3
+			net_minecraftforge_forgespi: forgespi 7.1.3
+			net_minecraftforge_mergetool-api: mergetool-api 1.0
+			net_minecraftforge_unsafe: unsafe 0.2.0
+			net_minecrell_terminalconsoleappender: terminalconsoleappender 1.3.0
+			org_apache_maven_maven-artifact: maven-artifact 3.8.5
+			org_jline_jline-reader: jline-reader 3.12.1
+			org_openjdk_nashorn_nashorn-core: nashorn-core 15.4
+			porting_lib_accessors: Porting Lib Accessors 2.3.9+1.20.1
+			porting_lib_asm: Porting Lib ASM 2.3.9+1.20.1
+			porting_lib_attributes: Porting Lib Attributes 2.3.9+1.20.1
+			porting_lib_base: Porting Lib Base 2.3.9+1.20.1
+				com_electronwill_night-config_core: core 3.6.6
+				com_electronwill_night-config_toml: toml 3.6.6
+				porting_lib_config: Porting Lib Config 2.3.9+1.20.1
+			porting_lib_blocks: Porting Lib Blocks 2.3.9+1.20.1
+			porting_lib_brewing: Porting Lib Brewing 2.3.9+1.20.1
+			porting_lib_chunk_loading: Porting Lib Chunk Loading 2.3.9+1.20.1
+			porting_lib_client_events: Porting Lib Client Events 2.3.9+1.20.1
+			porting_lib_common: Porting Lib Common 2.3.9+1.20.1
+			porting_lib_core: Porting Lib Core 2.3.9+1.20.1
+			porting_lib_data: Porting Lib Data 2.3.9+1.20.1
+			porting_lib_entity: Porting Lib Entity 2.3.9+1.20.1
+			porting_lib_extensions: Porting Lib Extensions 2.3.9+1.20.1
+			porting_lib_fluids: Porting Lib Fluids 2.3.9+1.20.1
+			porting_lib_gametest: Porting Lib GameTest 2.3.9+1.20.1
+			porting_lib_gui_utils: Porting Lib Gui Utils 2.3.9+1.20.1
+			porting_lib_items: Porting Lib Items 2.3.9+1.20.1
+			porting_lib_lazy_registration: Porting Lib Lazy Register 2.3.9+1.20.1
+			porting_lib_level_events: Porting Lib Level Events 2.3.9+1.20.1
+			porting_lib_loot: Porting Lib Loot 2.3.9+1.20.1
+			porting_lib_mixin_extensions: Porting Lib Mixin Extensions 2.3.9+1.20.1
+			porting_lib_model_builders: Porting Lib Model Builders 2.3.9+1.20.1
+			porting_lib_model_generators: Porting Lib Model Generators 2.3.9+1.20.1
+			porting_lib_model_loader: Porting Lib Model Loader 2.3.9+1.20.1
+			porting_lib_model_materials: Porting Lib Model Materials 2.3.9+1.20.1
+			porting_lib_models: Porting Lib Models 2.3.9+1.20.1
+			porting_lib_networking: Porting Lib Networking 2.3.9+1.20.1
+			porting_lib_obj_loader: Porting Lib Obj Loader 2.3.9+1.20.1
+			porting_lib_recipe_book_categories: Porting Lib Recipe Book Categories 2.3.9+1.20.1
+			porting_lib_registries: Porting Lib Registries 2.3.9+1.20.1
+			porting_lib_tags: Porting Lib Tags 3.0
+			porting_lib_tool_actions: Porting Lib Tool Actions 2.3.9+1.20.1
+			porting_lib_transfer: Porting Lib Transfer 2.3.9+1.20.1
+			porting_lib_utility: Porting Lib Utility 2.3.9+1.20.1
+			reach-entity-attributes: Reach Entity Attributes 2.4.0
+			team_reborn_energy: Energy 3.0.0
+			xyz_bluspring_autorenamingtool: AutoRenamingTool 0.1.52
+			xyz_bluspring_eventbus: eventbus 6.2.17
+			xyz_bluspring_srgutils: srgutils 0.5.15
+		mcps: Multi-core processing system 1.1.1
+		minecraft: Minecraft 1.20.1
+		modernui: Modern UI 3.12.0.1
+			org_commonmark_commonmark: commonmark 0.25.0
+		modmenu: Mod Menu 7.2.2
+		reeses-sodium-options: Reese's Sodium Options 1.7.2+mc1.20.1-build.101
+		sodium: Sodium 0.5.13+mc1.20.1
+		sodium-extra: Sodium Extra 0.5.9+mc1.20.1
+			caffeineconfig: CaffeineConfig 1.3.0+1.17
+		xaerominimap: Xaero's Minimap 25.3.10
+		xaeroworldmap: Xaero's World Map 1.40.11
+			xaerolib: XaeroLib 1.1.0
+		xbob_modloader: Crosshair Bobbing Modloader 1.0
+			xbob: Crosshair Bobbing 1.10
+			xbob_mixin: Crosshair Bobbing Mixins 1.10
+		ygd: Yifei's game adjustments 0.1.3
+	Loaded Shaderpack: (off)
+	Launched Version: Fabric娴嬭瘯
+	Backend library: LWJGL version 3.3.1 SNAPSHOT
+	Backend API: NVIDIA GeForce RTX 4060/PCIe/SSE2 GL version 4.6.0 NVIDIA 595.79, NVIDIA Corporation
+	Window size: 854x480
+	GL Caps: Using framebuffer using OpenGL 3.2
+	GL debug messages: 
+	Using VBOs: Yes
+	Is Modded: Definitely; Client brand changed to 'fabric'
+	Type: Client (map_client.txt)
+	Graphics mode: fancy
+	Resource Packs: fabric
+	Current Language: zh_cn
+	CPU: 20x Intel(R) Core(TM) i5-14600KF
+	Crash Report UUID: d2a94766-b0b7-4878-a74a-59d0c01a5f8e
+	FML: 47
+	Forge: net.minecraftforge:47.4.5
+[15:18:24] [Render thread/FATAL]: Preparing crash report with UUID db365962-8a0e-4b30-a598-1759bfad85d5
+#@!@# Game crashed! Crash report saved to: #@!@# F:\娴嬭瘯\versions\Fabric娴嬭瘯\crash-reports\crash-2026-03-24_15.18.24-client.txt

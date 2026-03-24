@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.qituo.mcps.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "BackgroundRendererMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
