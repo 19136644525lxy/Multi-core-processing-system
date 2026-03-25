@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import com.qituo.mcps.core.MCPSMod;
 import com.qituo.mcps.thread.ThreadManager;
-import com.qituo.mcps.task.MLTaskScheduler;
+import com.qituo.mcps.task.SmartTaskScheduler;
 
 public class AIManager {
     private static AIManager instance;
     private ThreadManager threadManager;
-    private MLTaskScheduler taskScheduler;
+    private SmartTaskScheduler taskScheduler;
     private Map<String, AITaskModel> taskModels;
     private Map<String, AIResourceModel> resourceModels;
     private AtomicInteger modelIdGenerator;
@@ -38,7 +38,7 @@ public class AIManager {
         return instance;
     }
     
-    public void initialize(ThreadManager threadManager, MLTaskScheduler taskScheduler) {
+    public void initialize(ThreadManager threadManager, SmartTaskScheduler taskScheduler) {
         this.threadManager = threadManager;
         this.taskScheduler = taskScheduler;
         

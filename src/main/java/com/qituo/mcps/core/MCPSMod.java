@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.qituo.mcps.thread.ThreadManager;
 import com.qituo.mcps.monitor.PerformanceMonitor;
 import com.qituo.mcps.task.MLTaskScheduler;
+import com.qituo.mcps.task.SmartTaskScheduler;
 import com.qituo.mcps.core.ResourceManager;
 import com.qituo.mcps.thread.ThreadCommunication;
 import com.qituo.mcps.core.GameLogicExpander;
@@ -33,7 +34,7 @@ public class MCPSMod implements ModInitializer {
     private static MCPSMod instance;
     private ThreadManager threadManager;
     private PerformanceMonitor performanceMonitor;
-    private MLTaskScheduler taskScheduler;
+    private SmartTaskScheduler taskScheduler;
     private ResourceManager resourceManager;
     private ThreadCommunication threadCommunication;
     private GameLogicExpander gameLogicProcessor;
@@ -77,8 +78,8 @@ public class MCPSMod implements ModInitializer {
         threadCommunication = new ThreadCommunication();
         threadCommunication.initialize();
         
-        // 初始化任务调度器
-        taskScheduler = new MLTaskScheduler(threadManager);
+        // 初始化智能任务调度器
+        taskScheduler = new SmartTaskScheduler(threadManager, performanceMonitor);
         taskScheduler.initialize();
         
         // 初始化资源管理器
@@ -155,6 +156,7 @@ public class MCPSMod implements ModInitializer {
             LOGGER.info("Multi-core processing system stopping...");
             threadManager.stop();
             performanceMonitor.stop();
+            taskScheduler.stop();
             aiManager.stop();
             gpuManager.stop();
             clusterManager.stop();
@@ -181,7 +183,7 @@ public class MCPSMod implements ModInitializer {
         return performanceMonitor;
     }
     
-    public MLTaskScheduler getTaskScheduler() {
+    public SmartTaskScheduler getTaskScheduler() {
         return taskScheduler;
     }
     

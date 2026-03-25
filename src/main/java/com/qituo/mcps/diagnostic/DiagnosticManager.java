@@ -79,12 +79,19 @@ public class DiagnosticManager {
     // 收集系统指标
     private void collectSystemMetrics() {
         // 系统负载
-        double systemLoad = MCPSMod.getInstance().getTaskScheduler().predictSystemLoad();
+        double systemLoad = calculateSystemLoad();
         performanceMetrics.put("system.load", new PerformanceMetric("system.load", systemLoad, "System load"));
         
         // 任务队列大小
         int queueSize = MCPSMod.getInstance().getTaskScheduler().getQueueSize();
         performanceMetrics.put("task.queue.size", new PerformanceMetric("task.queue.size", queueSize, "Task queue size"));
+    }
+    
+    // 计算系统负载
+    private double calculateSystemLoad() {
+        int activeTasks = MCPSMod.getInstance().getThreadManager().getActiveTaskCount();
+        int corePoolSize = MCPSMod.getInstance().getThreadManager().getCorePoolSize();
+        return corePoolSize > 0 ? (double) activeTasks / corePoolSize : 0.0;
     }
     
     // 收集线程指标

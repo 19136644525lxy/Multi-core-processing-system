@@ -2,7 +2,7 @@ package com.qituo.mcps.api;
 
 import com.qituo.mcps.core.MCPSMod;
 import com.qituo.mcps.thread.ThreadManager;
-import com.qituo.mcps.task.MLTaskScheduler;
+import com.qituo.mcps.task.SmartTaskScheduler;
 import com.qituo.mcps.core.ResourceManager;
 import com.qituo.mcps.network.NetworkManager;
 import com.qituo.mcps.render.RenderManager;
@@ -34,7 +34,7 @@ public class MCPSAPI {
     }
     
     // 获取任务调度器
-    public MLTaskScheduler getTaskScheduler() {
+    public SmartTaskScheduler getTaskScheduler() {
         return MCPSMod.getInstance().getTaskScheduler();
     }
     
