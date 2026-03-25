@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.qituo.mcps.thread.ThreadManager;
 import com.qituo.mcps.monitor.PerformanceMonitor;
-import com.qituo.mcps.task.MLTaskScheduler;
 import com.qituo.mcps.task.SmartTaskScheduler;
 import com.qituo.mcps.core.ResourceManager;
 import com.qituo.mcps.thread.ThreadCommunication;

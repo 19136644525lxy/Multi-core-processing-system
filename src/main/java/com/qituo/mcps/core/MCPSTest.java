@@ -1,7 +1,7 @@
 package com.qituo.mcps.core;
 
 import com.qituo.mcps.thread.ThreadManager;
-import com.qituo.mcps.task.MLTaskScheduler;
+import com.qituo.mcps.task.SmartTaskScheduler;
 import com.qituo.mcps.thread.ThreadCommunication;
 import com.qituo.mcps.core.ResourceManager;
 import com.qituo.mcps.core.ConcurrencyUtils;
@@ -78,18 +78,21 @@ public class MCPSTest {
     }
     
     private static void testTaskScheduler() {
-        System.out.println("\nTesting MLTaskScheduler...");
+        System.out.println("\nTesting SmartTaskScheduler...");
         ThreadManager threadManager = new ThreadManager();
         threadManager.initialize();
         
-        MLTaskScheduler taskScheduler = new MLTaskScheduler(threadManager);
+        PerformanceMonitor performanceMonitor = new PerformanceMonitor();
+        performanceMonitor.initialize();
+        
+        SmartTaskScheduler taskScheduler = new SmartTaskScheduler(threadManager, performanceMonitor);
         taskScheduler.initialize();
         
         // 提交一些测试任务
         for (int i = 0; i < 20; i++) {
             final int taskId = i;
             taskScheduler.scheduleTask("entity_ai", () -> {
-                System.out.println("MLTaskScheduler: Task " + taskId + " executed");
+                System.out.println("SmartTaskScheduler: Task " + taskId + " executed");
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
@@ -105,8 +108,9 @@ public class MCPSTest {
             e.printStackTrace();
         }
         
+        performanceMonitor.stop();
         threadManager.stop();
-        System.out.println("MLTaskScheduler test completed.");
+        System.out.println("SmartTaskScheduler test completed.");
     }
     
     private static void testThreadCommunication() {

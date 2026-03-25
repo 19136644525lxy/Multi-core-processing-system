@@ -2,9 +2,12 @@ package com.qituo.mcps.thread;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import com.qituo.mcps.core.MCPSMod;
 
 public class ThreadManager {
@@ -12,19 +15,34 @@ public class ThreadManager {
     private int corePoolSize;
     private int maxPoolSize;
     private List<WorkerThread> workerThreads;
-    private BlockingQueue<Runnable> taskQueue;
+    private PriorityBlockingQueue<Runnable> taskQueue;
     private AtomicInteger taskCounter;
     private AtomicBoolean energySavingMode;
     private ScheduledExecutorService monitorExecutor;
+    private ConcurrentHashMap<String, ThreadUsageData> threadUsageData;
+    private static AtomicLong totalTaskExecutionTime;
+    private static AtomicLong totalTasksExecuted;
+    
+    // 静态初始化块
+    static {
+        totalTaskExecutionTime = new AtomicLong(0);
+        totalTasksExecuted = new AtomicLong(0);
+    }
     
     public void initialize() {
         // 根据系统CPU核心数确定线程池大小
         corePoolSize = Math.max(4, Runtime.getRuntime().availableProcessors());
         maxPoolSize = corePoolSize * 2;
-        taskQueue = new LinkedBlockingQueue<>();
+        taskQueue = new PriorityBlockingQueue<>(11, (o1, o2) -> {
+            if (o1 instanceof PrioritizedTask && o2 instanceof PrioritizedTask) {
+                return Integer.compare(((PrioritizedTask) o2).getPriority(), ((PrioritizedTask) o1).getPriority());
+            }
+            return 0;
+        });
         workerThreads = new ArrayList<>();
         taskCounter = new AtomicInteger(0);
         energySavingMode = new AtomicBoolean(false);
+        threadUsageData = new ConcurrentHashMap<>();
         
         // 创建线程池
         executorService = new ThreadPoolExecutor(
@@ -44,7 +62,25 @@ public class ThreadManager {
                 }
             },
             new ThreadPoolExecutor.CallerRunsPolicy()
-        );
+        ) {
+            @Override
+            protected void beforeExecute(Thread t, Runnable r) {
+                super.beforeExecute(t, r);
+                threadUsageData.computeIfAbsent(t.getName(), k -> new ThreadUsageData()).startExecution();
+            }
+            
+            @Override
+            protected void afterExecute(Runnable r, Throwable t) {
+                super.afterExecute(r, t);
+                String threadName = Thread.currentThread().getName();
+                ThreadUsageData data = threadUsageData.get(threadName);
+                if (data != null) {
+                    data.endExecution();
+                }
+                taskCounter.decrementAndGet();
+                totalTasksExecuted.incrementAndGet();
+            }
+        };
         
         // 创建监控线程池
         monitorExecutor = Executors.newScheduledThreadPool(1);
@@ -90,12 +126,36 @@ public class ThreadManager {
         return executorService.submit(task);
     }
     
+    // 提交带优先级的任务
+    public Future<?> submitTask(Runnable task, int priority, String taskName) {
+        taskCounter.incrementAndGet();
+        return executorService.submit(new PrioritizedTask(task, priority, taskName));
+    }
+    
+    // 提交带优先级的任务（默认名称）
+    public Future<?> submitTask(Runnable task, int priority) {
+        return submitTask(task, priority, "unnamed");
+    }
+    
     // 资源预留：为关键任务预留资源
     public Future<?> submitCriticalTask(Runnable task) {
         taskCounter.incrementAndGet();
         // 确保至少有一个线程可用
         ensureMinimumThreads(1);
-        return executorService.submit(task);
+        // 关键任务使用最高优先级
+        return executorService.submit(new PrioritizedTask(task, 10, "critical_task"));
+    }
+    
+    // 提交高优先级任务
+    public Future<?> submitHighPriorityTask(Runnable task, String taskName) {
+        taskCounter.incrementAndGet();
+        return executorService.submit(new PrioritizedTask(task, 8, taskName));
+    }
+    
+    // 提交低优先级任务
+    public Future<?> submitLowPriorityTask(Runnable task, String taskName) {
+        taskCounter.incrementAndGet();
+        return executorService.submit(new PrioritizedTask(task, 2, taskName));
     }
     
     // 自适应线程池监控
@@ -107,14 +167,17 @@ public class ThreadManager {
                 int currentPoolSize = executorService.getPoolSize();
                 
                 // 计算当前负载
-                double load = (double) activeThreads / currentPoolSize;
+                double load = currentPoolSize > 0 ? (double) activeThreads / currentPoolSize : 0;
                 
-                // 自适应调整线程池大小
-                if (load > 0.8 && currentPoolSize < maxPoolSize) {
-                    // 负载较高，增加线程
-                    int newPoolSize = Math.min(currentPoolSize + 2, maxPoolSize);
+                // 计算队列压力
+                double queuePressure = queueSize > 0 ? (double) queueSize / (currentPoolSize * 5) : 0; // 假设每个线程可以处理5个任务
+                
+                // 智能调整线程池大小
+                if ((load > 0.8 || queuePressure > 1.0) && currentPoolSize < maxPoolSize) {
+                    // 负载较高或队列压力大，增加线程
+                    int newPoolSize = Math.min(currentPoolSize + Math.max(1, (int) Math.ceil(queuePressure)), maxPoolSize);
                     executorService.setCorePoolSize(newPoolSize);
-                    MCPSMod.LOGGER.info("Increased thread pool size to " + newPoolSize + " due to high load: " + load);
+                    MCPSMod.LOGGER.info("Increased thread pool size to " + newPoolSize + " due to high load: " + load + ", queue pressure: " + queuePressure);
                 } else if (load < 0.3 && currentPoolSize > corePoolSize) {
                     // 负载较低，减少线程
                     int newPoolSize = Math.max(currentPoolSize - 1, corePoolSize);
@@ -129,10 +192,50 @@ public class ThreadManager {
                     executorService.setCorePoolSize(newPoolSize);
                     MCPSMod.LOGGER.info("Energy saving mode: reduced thread pool size to " + newPoolSize);
                 }
+                
+                // 输出线程利用率
+                printThreadUsageStats();
             } catch (Exception e) {
                 MCPSMod.LOGGER.error("Error in adaptive thread pool monitor: " + e.getMessage());
             }
-        }, 10, 10, TimeUnit.SECONDS);
+        }, 5, 5, TimeUnit.SECONDS);
+    }
+    
+    // 打印线程使用统计信息
+    private void printThreadUsageStats() {
+        if (threadUsageData.isEmpty()) {
+            return;
+        }
+        
+        StringBuilder stats = new StringBuilder("Thread usage stats:");
+        double totalUtilization = 0;
+        int threadCount = 0;
+        
+        for (Map.Entry<String, ThreadUsageData> entry : threadUsageData.entrySet()) {
+            String threadName = entry.getKey();
+            ThreadUsageData data = entry.getValue();
+            long totalTime = data.getTotalExecutionTime();
+            long count = data.getExecutionCount();
+            double avgTime = data.getAverageExecutionTime();
+            
+            stats.append(" \"").append(threadName).append("\": ");
+            stats.append("executions: " + count + ", ");
+            stats.append("avg time: " + String.format("%.2f", avgTime) + "ms, ");
+            stats.append("total time: " + totalTime + "ms");
+            
+            totalUtilization += totalTime;
+            threadCount++;
+        }
+        
+        if (threadCount > 0) {
+            double avgUtilization = totalUtilization / threadCount;
+            stats.append(" | Avg utilization per thread: " + String.format("%.2f", avgUtilization) + "ms");
+        }
+        
+        stats.append(" | Total tasks executed: " + totalTasksExecuted.get());
+        stats.append(" | Total execution time: " + totalTaskExecutionTime.get() + "ms");
+        
+        MCPSMod.LOGGER.debug(stats.toString());
     }
     
     // 能源管理监控
@@ -232,6 +335,129 @@ public class ThreadManager {
             // 禁用能源管理模式，恢复线程池大小
             executorService.setCorePoolSize(corePoolSize);
             MCPSMod.LOGGER.info("Manually disabled energy saving mode");
+        }
+    }
+    
+    // 获取线程使用情况
+    public Map<String, ThreadUsageData> getThreadUsageData() {
+        return threadUsageData;
+    }
+    
+    // 获取总任务执行时间
+    public long getTotalTaskExecutionTime() {
+        return totalTaskExecutionTime.get();
+    }
+    
+    // 获取总任务执行次数
+    public long getTotalTasksExecuted() {
+        return totalTasksExecuted.get();
+    }
+    
+    // 获取线程池状态
+    public Map<String, Object> getThreadPoolStatus() {
+        Map<String, Object> status = new ConcurrentHashMap<>();
+        status.put("corePoolSize", corePoolSize);
+        status.put("maxPoolSize", maxPoolSize);
+        status.put("currentPoolSize", executorService.getPoolSize());
+        status.put("activeThreads", executorService.getActiveCount());
+        status.put("queueSize", taskQueue.size());
+        status.put("completedTasks", executorService.getCompletedTaskCount());
+        status.put("totalTasksExecuted", totalTasksExecuted.get());
+        status.put("totalExecutionTime", totalTaskExecutionTime.get());
+        status.put("energySavingMode", energySavingMode.get());
+        return status;
+    }
+    
+    // 优化线程创建和销毁
+    public void optimizeThreadManagement() {
+        int currentPoolSize = executorService.getPoolSize();
+        int activeThreads = executorService.getActiveCount();
+        int queueSize = taskQueue.size();
+        
+        // 基于当前负载和队列大小优化线程池
+        if (activeThreads == 0 && queueSize == 0 && currentPoolSize > corePoolSize / 2) {
+            // 系统空闲，减少线程池大小
+            int newPoolSize = Math.max(corePoolSize / 2, 2);
+            executorService.setCorePoolSize(newPoolSize);
+            MCPSMod.LOGGER.info("Optimized thread management: reduced pool size to " + newPoolSize + " due to idle system");
+        } else if (activeThreads == currentPoolSize && queueSize > currentPoolSize * 2) {
+            // 系统繁忙，增加线程池大小
+            int newPoolSize = Math.min(currentPoolSize + 2, maxPoolSize);
+            executorService.setCorePoolSize(newPoolSize);
+            MCPSMod.LOGGER.info("Optimized thread management: increased pool size to " + newPoolSize + " due to high demand");
+        }
+    }
+    
+    // 优先级任务类
+    public static class PrioritizedTask implements Runnable, Comparable<PrioritizedTask> {
+        private final Runnable task;
+        private final int priority;
+        private final String name;
+        
+        public PrioritizedTask(Runnable task, int priority, String name) {
+            this.task = task;
+            this.priority = priority;
+            this.name = name;
+        }
+        
+        public int getPriority() {
+            return priority;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        @Override
+        public void run() {
+            long startTime = System.currentTimeMillis();
+            try {
+                task.run();
+            } finally {
+                long duration = System.currentTimeMillis() - startTime;
+                totalTaskExecutionTime.addAndGet(duration);
+            }
+        }
+        
+        @Override
+        public int compareTo(PrioritizedTask other) {
+            return Integer.compare(other.priority, this.priority);
+        }
+    }
+    
+    // 线程使用数据类
+    private static class ThreadUsageData {
+        private AtomicLong totalExecutionTime;
+        private AtomicLong executionCount;
+        private AtomicLong lastExecutionStart;
+        
+        public ThreadUsageData() {
+            totalExecutionTime = new AtomicLong(0);
+            executionCount = new AtomicLong(0);
+            lastExecutionStart = new AtomicLong(0);
+        }
+        
+        public void startExecution() {
+            lastExecutionStart.set(System.currentTimeMillis());
+        }
+        
+        public void endExecution() {
+            long duration = System.currentTimeMillis() - lastExecutionStart.get();
+            totalExecutionTime.addAndGet(duration);
+            executionCount.incrementAndGet();
+        }
+        
+        public long getTotalExecutionTime() {
+            return totalExecutionTime.get();
+        }
+        
+        public long getExecutionCount() {
+            return executionCount.get();
+        }
+        
+        public double getAverageExecutionTime() {
+            long count = executionCount.get();
+            return count > 0 ? (double) totalExecutionTime.get() / count : 0;
         }
     }
     
