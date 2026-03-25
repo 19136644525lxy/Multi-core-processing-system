@@ -15,6 +15,7 @@ import com.qituo.mcps.compatibility.CompatibilityManager;
 import com.qituo.mcps.config.ConfigManager;
 import com.qituo.mcps.config.MCPSConfig;
 import com.qituo.mcps.ai.AIManager;
+import com.qituo.mcps.ai.NPCBehaviorManager;
 import com.qituo.mcps.gpu.GPUManager;
 import com.qituo.mcps.cluster.ClusterManager;
 import com.qituo.mcps.network.NetworkManager;
@@ -41,6 +42,7 @@ public class MCPSMod implements ModInitializer {
     private CompatibilityManager compatibilityManager;
     private ConfigManager configManager;
     private AIManager aiManager;
+    private NPCBehaviorManager npcBehaviorManager;
     private GPUManager gpuManager;
     private ClusterManager clusterManager;
     private NetworkManager networkManager;
@@ -92,6 +94,10 @@ public class MCPSMod implements ModInitializer {
         // 初始化AI管理器
         aiManager = AIManager.getInstance();
         aiManager.initialize(threadManager, taskScheduler);
+        
+        // 初始化NPC行为管理器
+        npcBehaviorManager = NPCBehaviorManager.getInstance();
+        npcBehaviorManager.initialize(threadManager, taskScheduler);
         
         // 初始化GPU管理器
         gpuManager = GPUManager.getInstance();
@@ -157,6 +163,7 @@ public class MCPSMod implements ModInitializer {
             performanceMonitor.stop();
             taskScheduler.stop();
             aiManager.stop();
+            npcBehaviorManager.stop();
             gpuManager.stop();
             clusterManager.stop();
             networkManager.shutdown();
@@ -212,6 +219,10 @@ public class MCPSMod implements ModInitializer {
     
     public AIManager getAiManager() {
         return aiManager;
+    }
+    
+    public NPCBehaviorManager getNpcBehaviorManager() {
+        return npcBehaviorManager;
     }
     
     public GPUManager getGpuManager() {
