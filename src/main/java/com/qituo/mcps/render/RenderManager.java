@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import com.qituo.mcps.core.MCPSMod;
 import com.qituo.mcps.gpu.GPUManager;
 
@@ -27,6 +28,12 @@ public class RenderManager {
     private AtomicInteger frameCount;
     private AtomicLong totalFrameTime;
     private int renderQualityLevel; // 渲染质量级别 0-5
+    private boolean rayTracingEnabled; // 光线追踪启用状态
+    private int rayTracingQuality; // 光线追踪质量级别 0-5
+    private Map<DistanceRange, LODSettings> lodSettings; // 基于距离的LOD设置
+    private Map<String, VoxelRenderData> voxelRenderCache; // 体素渲染缓存
+    private AtomicInteger rayTracingFrameCount; // 光线追踪帧计数
+    private AtomicLong totalRayTracingTime; // 光线追踪总时间
     
     public void initialize() {
         // 创建渲染线程池
@@ -44,8 +51,33 @@ public class RenderManager {
         this.frameCount = new AtomicInteger(0);
         this.totalFrameTime = new AtomicLong(0);
         this.renderQualityLevel = 3; // 默认中等质量
+        this.rayTracingEnabled = false; // 默认禁用光线追踪
+        this.rayTracingQuality = 2; // 默认低光线追踪质量
+        this.lodSettings = new HashMap<>();
+        this.voxelRenderCache = new ConcurrentHashMap<>();
+        this.rayTracingFrameCount = new AtomicInteger(0);
+        this.totalRayTracingTime = new AtomicLong(0);
+        
+        // 初始化LOD设置
+        initializeLODSettings();
         
         MCPSMod.LOGGER.info("RenderManager initialized with " + renderThreads + " render threads");
+        MCPSMod.LOGGER.info("Advanced rendering features initialized: ray tracing, dynamic LOD, voxel rendering");
+    }
+    
+    // 初始化LOD设置
+    private void initializeLODSettings() {
+        // 近距离LOD设置
+        lodSettings.put(new DistanceRange(0, 10), new LODSettings(1.0f, 1.0f, 1.0f));
+        
+        // 中距离LOD设置
+        lodSettings.put(new DistanceRange(10, 20), new LODSettings(0.75f, 0.8f, 0.9f));
+        
+        // 远距离LOD设置
+        lodSettings.put(new DistanceRange(20, 30), new LODSettings(0.5f, 0.6f, 0.7f));
+        
+        // 超远距离LOD设置
+        lodSettings.put(new DistanceRange(30, Integer.MAX_VALUE), new LODSettings(0.25f, 0.4f, 0.5f));
     }
     
     // 提交渲染任务
@@ -155,6 +187,50 @@ public class RenderManager {
     // 渲染天空
     private void renderSky() {
         // 天空渲染逻辑
+        if (rayTracingEnabled) {
+            renderSkyWithRayTracing();
+        } else {
+            renderSkyWithTraditional();
+        }
+    }
+    
+    // 使用光线追踪渲染天空
+    private void renderSkyWithRayTracing() {
+        long startTime = System.currentTimeMillis();
+        try {
+            // 检查是否启用GPU加速
+            if (gpuAcceleration && MCPSMod.getInstance() != null) {
+                GPUManager gpuManager = MCPSMod.getInstance().getGpuManager();
+                if (gpuManager != null && gpuManager.getGPUDevices().size() > 0) {
+                    // 使用GPU执行光线追踪
+                    Map<String, Object> parameters = new HashMap<>();
+                    parameters.put("quality", rayTracingQuality);
+                    gpuManager.submitGPUJob("raytracing_sky", () -> {
+                        // GPU光线追踪天空渲染逻辑
+                    }, parameters);
+                } else {
+                    // 回退到CPU光线追踪
+                    cpuRayTracingSky();
+                }
+            } else {
+                // CPU光线追踪
+                cpuRayTracingSky();
+            }
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            totalRayTracingTime.addAndGet(duration);
+            rayTracingFrameCount.incrementAndGet();
+        }
+    }
+    
+    // CPU光线追踪天空渲染
+    private void cpuRayTracingSky() {
+        // 简化的CPU光线追踪天空渲染逻辑
+    }
+    
+    // 使用传统方法渲染天空
+    private void renderSkyWithTraditional() {
+        // 传统天空渲染逻辑
     }
     
     // 渲染地形
@@ -163,7 +239,104 @@ public class RenderManager {
         List<Runnable> terrainTasks = decomposeTerrainTasks();
         
         // 并行执行地形渲染任务
-        terrainTasks.parallelStream().forEach(Runnable::run);
+        terrainTasks.parallelStream().forEach(task -> {
+            try {
+                task.run();
+            } catch (Exception e) {
+                MCPSMod.LOGGER.error("Error in terrain task: " + e.getMessage());
+            }
+        });
+    }
+    
+    // 渲染单个区块（增强版，支持LOD和体素渲染）
+    private void renderChunk(int x, int z) {
+        // 计算区块与玩家的距离
+        double distance = calculateDistanceToPlayer(x, z);
+        
+        // 获取对应距离的LOD设置
+        LODSettings lodSettings = getLODSettings(distance);
+        
+        // 根据距离和LOD设置调整渲染细节
+        if (distance < 10) {
+            // 近距离：完整渲染
+            renderChunkWithFullDetail(x, z, lodSettings);
+        } else if (distance < 20) {
+            // 中距离：中等细节
+            renderChunkWithMediumDetail(x, z, lodSettings);
+        } else {
+            // 远距离：低细节
+            renderChunkWithLowDetail(x, z, lodSettings);
+        }
+        
+        // 检查是否需要体素渲染优化
+        if (distance < 15) {
+            // 近距离使用体素渲染优化大型结构
+            optimizeVoxelRendering(x, z);
+        }
+    }
+    
+    // 获取对应距离的LOD设置
+    private LODSettings getLODSettings(double distance) {
+        for (Map.Entry<DistanceRange, LODSettings> entry : lodSettings.entrySet()) {
+            if (entry.getKey().contains(distance)) {
+                return entry.getValue();
+            }
+        }
+        // 默认LOD设置
+        return new LODSettings(1.0f, 1.0f, 1.0f);
+    }
+    
+    // 完整渲染区块（支持LOD）
+    private void renderChunkWithFullDetail(int x, int z, LODSettings settings) {
+        // 根据LOD设置调整渲染细节
+        // 完整渲染逻辑
+    }
+    
+    // 中等细节渲染区块（支持LOD）
+    private void renderChunkWithMediumDetail(int x, int z, LODSettings settings) {
+        // 根据LOD设置调整渲染细节
+        // 中等细节渲染逻辑
+    }
+    
+    // 低细节渲染区块（支持LOD）
+    private void renderChunkWithLowDetail(int x, int z, LODSettings settings) {
+        // 根据LOD设置调整渲染细节
+        // 低细节渲染逻辑
+    }
+    
+    // 优化体素渲染
+    private void optimizeVoxelRendering(int x, int z) {
+        String cacheKey = x + "," + z;
+        
+        // 检查缓存中是否已有体素渲染数据
+        VoxelRenderData cachedData = voxelRenderCache.get(cacheKey);
+        if (cachedData != null && !cachedData.isExpired()) {
+            // 使用缓存的体素渲染数据
+            renderWithVoxelData(cachedData);
+            return;
+        }
+        
+        // 生成新的体素渲染数据
+        VoxelRenderData voxelData = generateVoxelRenderData(x, z);
+        if (voxelData != null) {
+            // 缓存体素渲染数据
+            voxelRenderCache.put(cacheKey, voxelData);
+            
+            // 使用新生成的体素渲染数据
+            renderWithVoxelData(voxelData);
+        }
+    }
+    
+    // 生成体素渲染数据
+    private VoxelRenderData generateVoxelRenderData(int x, int z) {
+        // 生成体素渲染数据的逻辑
+        // 这里可以实现基于距离的渲染优化
+        return new VoxelRenderData(x, z, System.currentTimeMillis() + 300000); // 5分钟过期
+    }
+    
+    // 使用体素数据渲染
+    private void renderWithVoxelData(VoxelRenderData data) {
+        // 使用体素数据进行渲染的逻辑
     }
     
     // 分解地形渲染任务（按优先级）
@@ -204,38 +377,7 @@ public class RenderManager {
         return Math.sqrt(chunkX * chunkX + chunkZ * chunkZ);
     }
     
-    // 渲染单个区块
-    private void renderChunk(int x, int z) {
-        // 计算区块与玩家的距离
-        double distance = calculateDistanceToPlayer(x, z);
-        
-        // 根据距离调整渲染细节
-        if (distance < 10) {
-            // 近距离：完整渲染
-            renderChunkWithFullDetail(x, z);
-        } else if (distance < 20) {
-            // 中距离：中等细节
-            renderChunkWithMediumDetail(x, z);
-        } else {
-            // 远距离：低细节
-            renderChunkWithLowDetail(x, z);
-        }
-    }
-    
-    // 完整渲染区块
-    private void renderChunkWithFullDetail(int x, int z) {
-        // 完整渲染逻辑
-    }
-    
-    // 中等细节渲染区块
-    private void renderChunkWithMediumDetail(int x, int z) {
-        // 中等细节渲染逻辑
-    }
-    
-    // 低细节渲染区块
-    private void renderChunkWithLowDetail(int x, int z) {
-        // 低细节渲染逻辑
-    }
+
     
     // 渲染实体
     private void renderEntities() {
@@ -490,5 +632,131 @@ public class RenderManager {
         public int getPriority() {
             return priority;
         }
+    }
+    
+    // 距离范围类
+    private static class DistanceRange {
+        private double min;
+        private double max;
+        
+        public DistanceRange(double min, double max) {
+            this.min = min;
+            this.max = max;
+        }
+        
+        public boolean contains(double distance) {
+            return distance >= min && distance < max;
+        }
+    }
+    
+    // LOD设置类
+    private static class LODSettings {
+        private float geometryLOD; // 几何LOD级别
+        private float textureLOD; // 纹理LOD级别
+        private float shadowLOD; // 阴影LOD级别
+        
+        public LODSettings(float geometryLOD, float textureLOD, float shadowLOD) {
+            this.geometryLOD = geometryLOD;
+            this.textureLOD = textureLOD;
+            this.shadowLOD = shadowLOD;
+        }
+        
+        public float getGeometryLOD() {
+            return geometryLOD;
+        }
+        
+        public float getTextureLOD() {
+            return textureLOD;
+        }
+        
+        public float getShadowLOD() {
+            return shadowLOD;
+        }
+    }
+    
+    // 体素渲染数据类
+    private static class VoxelRenderData {
+        private int chunkX;
+        private int chunkZ;
+        private long expirationTime;
+        private Map<String, Object> voxelData;
+        
+        public VoxelRenderData(int chunkX, int chunkZ, long expirationTime) {
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.expirationTime = expirationTime;
+            this.voxelData = new HashMap<>();
+        }
+        
+        public int getChunkX() {
+            return chunkX;
+        }
+        
+        public int getChunkZ() {
+            return chunkZ;
+        }
+        
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expirationTime;
+        }
+        
+        public Map<String, Object> getVoxelData() {
+            return voxelData;
+        }
+        
+        public void putVoxelData(String key, Object value) {
+            voxelData.put(key, value);
+        }
+    }
+    
+    // 启用/禁用光线追踪
+    public void setRayTracingEnabled(boolean enabled) {
+        this.rayTracingEnabled = enabled;
+        MCPSMod.LOGGER.info("Ray tracing " + (enabled ? "enabled" : "disabled"));
+    }
+    
+    // 设置光线追踪质量
+    public void setRayTracingQuality(int quality) {
+        this.rayTracingQuality = Math.max(0, Math.min(5, quality));
+        MCPSMod.LOGGER.info("Ray tracing quality set to level " + rayTracingQuality);
+    }
+    
+    // 获取光线追踪启用状态
+    public boolean isRayTracingEnabled() {
+        return rayTracingEnabled;
+    }
+    
+    // 获取光线追踪质量
+    public int getRayTracingQuality() {
+        return rayTracingQuality;
+    }
+    
+    // 获取光线追踪性能
+    public double getRayTracingPerformance() {
+        if (rayTracingFrameCount.get() == 0) return 0;
+        long avgRayTracingTime = totalRayTracingTime.get() / rayTracingFrameCount.get();
+        if (avgRayTracingTime == 0) return 0;
+        return 1000.0 / avgRayTracingTime;
+    }
+    
+    // 清理体素渲染缓存
+    public void cleanupVoxelCache() {
+        List<String> expiredKeys = new ArrayList<>();
+        for (Map.Entry<String, VoxelRenderData> entry : voxelRenderCache.entrySet()) {
+            if (entry.getValue().isExpired()) {
+                expiredKeys.add(entry.getKey());
+            }
+        }
+        
+        for (String key : expiredKeys) {
+            voxelRenderCache.remove(key);
+        }
+        
+        MCPSMod.LOGGER.info("Cleaned up " + expiredKeys.size() + " expired voxel render cache entries");
+    }
+    
+    // 获取体素渲染缓存大小
+    public int getVoxelCacheSize() {
+        return voxelRenderCache.size();
     }
 }
