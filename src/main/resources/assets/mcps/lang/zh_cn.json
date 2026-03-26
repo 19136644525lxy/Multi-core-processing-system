@@ -90,5 +90,15 @@
   "mcps.command.ecosystem.compatibility.report.start": "生成兼容性报告...",
   "mcps.command.ecosystem.compatibility.report.complete": "兼容性报告生成完成",
   "mcps.command.ecosystem.mods.list.header": "已注册的模组:",
-  "mcps.command.ecosystem.mods.info.not_found": "模组未找到"
+  "mcps.command.ecosystem.mods.info.not_found": "模组未找到",
+  "mcps.command.performance.analyze.start": "开始性能分析...",
+  "mcps.command.performance.analyze.complete": "性能分析完成",
+  "mcps.command.performance.bottleneck.detect.start": "开始瓶颈检测...",
+  "mcps.command.performance.bottleneck.detect.complete": "瓶颈检测完成",
+  "mcps.command.performance.bottleneck.list.header": "检测到的瓶颈:",
+  "mcps.command.performance.suggestions.generate.start": "生成优化建议...",
+  "mcps.command.performance.suggestions.generate.complete": "优化建议生成完成",
+  "mcps.command.performance.suggestions.list.header": "优化建议:",
+  "mcps.command.performance.metrics.reset.success": "性能指标重置成功",
+  "mcps.command.performance.metrics.list.header": "性能指标:"
 }

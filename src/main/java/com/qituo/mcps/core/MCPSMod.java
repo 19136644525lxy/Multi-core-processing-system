@@ -28,6 +28,10 @@ import com.qituo.mcps.api.PluginManager;
 import com.qituo.mcps.cloud.CloudCommands;
 import com.qituo.mcps.cloud.CloudManager;
 import com.qituo.mcps.diagnostic.DiagnosticManager;
+import com.qituo.mcps.diagnostic.PerformanceCommands;
+import com.qituo.mcps.diagnostic.RealTimePerformanceAnalyzer;
+import com.qituo.mcps.diagnostic.BottleneckDetector;
+import com.qituo.mcps.diagnostic.OptimizationSuggestionSystem;
 import com.qituo.mcps.integration.CompatibilityTestTool;
 import com.qituo.mcps.integration.EcosystemCommands;
 import com.qituo.mcps.integration.IntegrationHelper;
@@ -68,6 +72,9 @@ public class MCPSMod implements ModInitializer {
     private IntegrationHelper integrationHelper;
     private ModInteractionFramework modInteractionFramework;
     private ModLoadingOptimizer modLoadingOptimizer;
+    private RealTimePerformanceAnalyzer performanceAnalyzer;
+    private BottleneckDetector bottleneckDetector;
+    private OptimizationSuggestionSystem optimizationSuggestionSystem;
     
     @Override
     public void onInitialize() {
@@ -166,13 +173,20 @@ public class MCPSMod implements ModInitializer {
         // 注册MCPS模组到交互框架
         modInteractionFramework.registerMod(MOD_ID, "1.0.0", "Multi-core processing system for Minecraft");
         
-        // 命令已移除，使用按键绑定打开监控界面
+        // 初始化性能分析工具
+        performanceAnalyzer = RealTimePerformanceAnalyzer.getInstance();
+        bottleneckDetector = BottleneckDetector.getInstance();
+        optimizationSuggestionSystem = OptimizationSuggestionSystem.getInstance();
+        
         
         // 注册云备份命令
         CommandRegistrationCallback.EVENT.register(CloudCommands::register);
         
         // 注册生态系统命令
         CommandRegistrationCallback.EVENT.register(EcosystemCommands::register);
+        
+        // 注册性能分析命令
+        CommandRegistrationCallback.EVENT.register(PerformanceCommands::register);
         
         // 注册服务器生命周期事件
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {

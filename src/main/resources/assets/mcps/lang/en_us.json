@@ -90,5 +90,15 @@
   "mcps.command.ecosystem.compatibility.report.start": "Generating compatibility report...",
   "mcps.command.ecosystem.compatibility.report.complete": "Compatibility report generated",
   "mcps.command.ecosystem.mods.list.header": "Registered mods:",
-  "mcps.command.ecosystem.mods.info.not_found": "Mod not found"
+  "mcps.command.ecosystem.mods.info.not_found": "Mod not found",
+  "mcps.command.performance.analyze.start": "Starting performance analysis...",
+  "mcps.command.performance.analyze.complete": "Performance analysis completed",
+  "mcps.command.performance.bottleneck.detect.start": "Starting bottleneck detection...",
+  "mcps.command.performance.bottleneck.detect.complete": "Bottleneck detection completed",
+  "mcps.command.performance.bottleneck.list.header": "Detected bottlenecks:",
+  "mcps.command.performance.suggestions.generate.start": "Generating optimization suggestions...",
+  "mcps.command.performance.suggestions.generate.complete": "Optimization suggestions generated",
+  "mcps.command.performance.suggestions.list.header": "Optimization suggestions:",
+  "mcps.command.performance.metrics.reset.success": "Performance metrics reset successfully",
+  "mcps.command.performance.metrics.list.header": "Performance metrics:"
 }
