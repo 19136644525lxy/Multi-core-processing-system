@@ -27,6 +27,7 @@ import com.qituo.mcps.api.EventManager;
 import com.qituo.mcps.api.PluginManager;
 import com.qituo.mcps.cloud.CloudCommands;
 import com.qituo.mcps.cloud.CloudManager;
+import com.qituo.mcps.client.MCPSMainMenu;
 import com.qituo.mcps.diagnostic.DiagnosticManager;
 import com.qituo.mcps.diagnostic.PerformanceCommands;
 import com.qituo.mcps.diagnostic.RealTimePerformanceAnalyzer;
@@ -317,5 +318,9 @@ public class MCPSMod implements ModInitializer {
     
     public CloudManager getCloudManager() {
         return cloudManager;
+    }
+    
+    public static void openMainMenu() {
+        MCPSMainMenu.open();
     }
 }
