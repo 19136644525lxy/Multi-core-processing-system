@@ -9,7 +9,7 @@ import com.qituo.mcps.monitor.PerformanceMonitor;
 import com.qituo.mcps.task.SmartTaskScheduler;
 import com.qituo.mcps.core.ResourceManager;
 import com.qituo.mcps.thread.ThreadCommunication;
-import com.qituo.mcps.core.GameLogicExpander;
+import com.qituo.mcps.core.GameLogicParallelizer;
 import com.qituo.mcps.error.ErrorHandler;
 import com.qituo.mcps.compatibility.CompatibilityManager;
 import com.qituo.mcps.config.ConfigManager;
@@ -37,7 +37,7 @@ public class MCPSMod implements ModInitializer {
     private SmartTaskScheduler taskScheduler;
     private ResourceManager resourceManager;
     private ThreadCommunication threadCommunication;
-    private GameLogicExpander gameLogicProcessor;
+    private GameLogicParallelizer gameLogicProcessor;
     private ErrorHandler errorHandler;
     private CompatibilityManager compatibilityManager;
     private ConfigManager configManager;
@@ -135,7 +135,7 @@ public class MCPSMod implements ModInitializer {
         testManager.initialize();
         
         // 初始化游戏逻辑处理器
-        gameLogicProcessor = new GameLogicExpander();
+        gameLogicProcessor = new GameLogicParallelizer();
         
         // 命令已移除，使用按键绑定打开监控界面
         
@@ -201,7 +201,7 @@ public class MCPSMod implements ModInitializer {
         return threadCommunication;
     }
     
-    public GameLogicProcessor getGameLogicProcessor() {
+    public GameLogicParallelizer getGameLogicProcessor() {
         return gameLogicProcessor;
     }
     

@@ -40,7 +40,7 @@ public class GameLogicExpander extends GameLogicProcessor {
         MCPSMod.LOGGER.info("GameLogicExpander initialized");
     }
     
-    private void onServerTickEndExpanded(MinecraftServer server) {
+    protected void onServerTickEndExpanded(MinecraftServer server) {
         // 收集所有世界
         collectWorlds(server);
         
