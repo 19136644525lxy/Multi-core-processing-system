@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameLogicExpander extends GameLogicProcessor {
-    private List<World> worlds;
+    protected List<World> worlds;
     private CopyOnWriteArrayList<BlockEntity> blockEntities;
     private CopyOnWriteArrayList<HostileEntity> hostileEntities;
     private CopyOnWriteArrayList<AnimalEntity> animalEntities;

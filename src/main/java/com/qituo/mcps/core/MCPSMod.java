@@ -1,6 +1,7 @@
 package com.qituo.mcps.core;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import com.qituo.mcps.render.RenderManager;
 import com.qituo.mcps.storage.StorageManager;
 import com.qituo.mcps.api.EventManager;
 import com.qituo.mcps.api.PluginManager;
+import com.qituo.mcps.cloud.CloudCommands;
+import com.qituo.mcps.cloud.CloudManager;
 import com.qituo.mcps.diagnostic.DiagnosticManager;
 import com.qituo.mcps.platform.PlatformManager;
 import com.qituo.mcps.test.TestManager;
@@ -53,6 +56,7 @@ public class MCPSMod implements ModInitializer {
     private DiagnosticManager diagnosticManager;
     private PlatformManager platformManager;
     private TestManager testManager;
+    private CloudManager cloudManager;
     
     @Override
     public void onInitialize() {
@@ -134,10 +138,17 @@ public class MCPSMod implements ModInitializer {
         testManager = TestManager.getInstance();
         testManager.initialize();
         
+        // 初始化云管理器
+        cloudManager = new CloudManager();
+        cloudManager.initialize();
+        
         // 初始化游戏逻辑处理器
         gameLogicProcessor = new GameLogicParallelizer();
         
         // 命令已移除，使用按键绑定打开监控界面
+        
+        // 注册云备份命令
+        CommandRegistrationCallback.EVENT.register(CloudCommands::register);
         
         // 注册服务器生命周期事件
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
@@ -169,6 +180,7 @@ public class MCPSMod implements ModInitializer {
             networkManager.shutdown();
             renderManager.shutdown();
             storageManager.shutdown();
+            cloudManager.shutdown();
             pluginManager.stopAllPlugins();
             diagnosticManager.shutdown();
             testManager.shutdown();
@@ -263,5 +275,9 @@ public class MCPSMod implements ModInitializer {
     
     public TestManager getTestManager() {
         return testManager;
+    }
+    
+    public CloudManager getCloudManager() {
+        return cloudManager;
     }
 }

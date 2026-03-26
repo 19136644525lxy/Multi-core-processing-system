@@ -57,6 +57,12 @@ public class MCPSConfig {
     public static boolean renderOptimizationEnabled = true;
     public static int renderThreadPriority = 5;
     
+    // 云备份设置
+    public static boolean cloudBackupEnabled = true;
+    public static int backupInterval = 60; // 分钟
+    public static int maxBackups = 10;
+    public static String cloudStorageEndpoint = "http://localhost:8080/api/backup";
+    
     @Environment(EnvType.CLIENT)
     public static Screen createConfigScreen(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
@@ -172,6 +178,28 @@ public class MCPSConfig {
         renderCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("mcps.config.render.optimization"), renderOptimizationEnabled)
             .setDefaultValue(true)
             .setTooltip(Text.translatable("mcps.config.render.optimization.tooltip"))
+            .build());
+        
+        // 云备份设置
+        ConfigCategory cloudCategory = builder.getOrCreateCategory(Text.translatable("mcps.config.category.cloud"));
+        
+        cloudCategory.addEntry(entryBuilder.startBooleanToggle(Text.translatable("mcps.config.cloud.backup.enabled"), cloudBackupEnabled)
+            .setDefaultValue(true)
+            .setTooltip(Text.translatable("mcps.config.cloud.backup.enabled.tooltip"))
+            .build());
+        
+        cloudCategory.addEntry(entryBuilder.startIntField(Text.translatable("mcps.config.cloud.backup.interval"), backupInterval)
+            .setDefaultValue(60)
+            .setMin(1)
+            .setMax(1440)
+            .setTooltip(Text.translatable("mcps.config.cloud.backup.interval.tooltip"))
+            .build());
+        
+        cloudCategory.addEntry(entryBuilder.startIntField(Text.translatable("mcps.config.cloud.backup.max_backups"), maxBackups)
+            .setDefaultValue(10)
+            .setMin(1)
+            .setMax(100)
+            .setTooltip(Text.translatable("mcps.config.cloud.backup.max_backups.tooltip"))
             .build());
         
         // 监控界面

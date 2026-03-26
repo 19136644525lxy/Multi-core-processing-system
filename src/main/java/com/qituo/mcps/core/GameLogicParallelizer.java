@@ -46,7 +46,7 @@ public class GameLogicParallelizer extends GameLogicExpander {
     
     // 扩展onServerTickEndExpanded方法，添加并行化处理
     @Override
-    private void onServerTickEndExpanded(MinecraftServer server) {
+    protected void onServerTickEndExpanded(MinecraftServer server) {
         super.onServerTickEndExpanded(server);
         
         // 并行处理红石系统
@@ -221,14 +221,11 @@ public class GameLogicParallelizer extends GameLogicExpander {
     private void parallelWorldGeneration() {
         worlds.parallelStream().forEach(world -> {
             try {
-                // 获取区块生成器
-                ChunkGenerator chunkGenerator = world.getChunkManager().getChunkGenerator();
-                
                 // 并行处理区块生成
-                processChunksParallel(world, chunkGenerator);
+                processChunksParallel(world);
                 
                 // 优化生物群系生成
-                optimizeBiomeGeneration(world, chunkGenerator);
+                optimizeBiomeGeneration(world);
             } catch (Exception e) {
                 MCPSMod.getInstance().getErrorHandler().logError("Error processing biome generation", e);
             }
@@ -236,13 +233,13 @@ public class GameLogicParallelizer extends GameLogicExpander {
     }
     
     // 并行处理区块生成
-    private void processChunksParallel(World world, ChunkGenerator chunkGenerator) {
+    private void processChunksParallel(World world) {
         // 这里应该有具体的区块生成逻辑
         // 例如并行生成多个区块
     }
     
     // 优化生物群系生成
-    private void optimizeBiomeGeneration(World world, ChunkGenerator chunkGenerator) {
+    private void optimizeBiomeGeneration(World world) {
         // 这里应该有具体的生物群系生成优化逻辑
         // 例如根据生物群系类型优化生成过程
     }

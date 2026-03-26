@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import com.qituo.mcps.core.MCPSMod;
@@ -23,16 +24,27 @@ public class NetworkManager {
     private DatagramSocket udpSocket;
     private ScheduledExecutorService executorService;
     private ConcurrentHashMap<String, NetworkConnection> connections;
+    private ConcurrentHashMap<String, ServerInfo> serverCluster;
+    private BandwidthMonitor bandwidthMonitor;
+    private PredictionManager predictionManager;
     private int port;
+    private AtomicLong totalBytesSent;
+    private AtomicLong totalBytesReceived;
     
     public void initialize(int port) {
         this.port = port;
         this.executorService = Executors.newScheduledThreadPool(10);
         this.connections = new ConcurrentHashMap<>();
+        this.serverCluster = new ConcurrentHashMap<>();
+        this.bandwidthMonitor = new BandwidthMonitor();
+        this.predictionManager = new PredictionManager();
+        this.totalBytesSent = new AtomicLong(0);
+        this.totalBytesReceived = new AtomicLong(0);
         
         try {
             this.udpSocket = new DatagramSocket(port);
             startUDPServer();
+            startBandwidthMonitoring();
         } catch (SocketException e) {
             MCPSMod.LOGGER.error("Failed to initialize UDP socket: " + e.getMessage());
         }
@@ -54,6 +66,7 @@ public class NetworkManager {
                             byte[] data = decompressData(packet.getData(), 0, packet.getLength());
                             String message = new String(data);
                             MCPSMod.LOGGER.debug("Received UDP message: " + message);
+                            totalBytesReceived.addAndGet(data.length);
                         } catch (Exception e) {
                             MCPSMod.LOGGER.error("Failed to process UDP packet: " + e.getMessage());
                         }
@@ -74,6 +87,7 @@ public class NetworkManager {
                 byte[] data = compressData(message.getBytes());
                 DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName(host), port);
                 udpSocket.send(packet);
+                totalBytesSent.addAndGet(data.length);
             } catch (Exception e) {
                 MCPSMod.LOGGER.error("Failed to send UDP message: " + e.getMessage());
             }
@@ -109,17 +123,32 @@ public class NetworkManager {
         }
     }
     
-    // 数据压缩
+    // 高效数据压缩
     public byte[] compressData(byte[] data) throws IOException {
+        // 对于小数据包，直接返回原数据
+        if (data.length < 100) {
+            return data;
+        }
+        
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (GZIPOutputStream gzos = new GZIPOutputStream(baos)) {
             gzos.write(data);
         }
-        return baos.toByteArray();
+        byte[] compressed = baos.toByteArray();
+        
+        // 如果压缩后体积更大，返回原数据
+        return compressed.length < data.length ? compressed : data;
     }
     
     // 数据解压缩
     public byte[] decompressData(byte[] data, int offset, int length) throws IOException {
+        // 检查是否是压缩数据
+        if (length < 2 || data[offset] != (byte)0x1f || data[offset + 1] != (byte)0x8b) {
+            byte[] result = new byte[length];
+            System.arraycopy(data, offset, result, 0, length);
+            return result;
+        }
+        
         ByteArrayInputStream bais = new ByteArrayInputStream(data, offset, length);
         try (GZIPInputStream gzis = new GZIPInputStream(bais)) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -192,6 +221,59 @@ public class NetworkManager {
         }
     }
     
+    // 启动带宽监控
+    private void startBandwidthMonitoring() {
+        executorService.scheduleAtFixedRate(() -> {
+            bandwidthMonitor.update(totalBytesSent.get(), totalBytesReceived.get());
+            MCPSMod.LOGGER.debug("Bandwidth usage: " + bandwidthMonitor.getFormattedUsage());
+        }, 0, 1, java.util.concurrent.TimeUnit.SECONDS);
+    }
+    
+    // 添加服务器到集群
+    public void addServerToCluster(String serverAddress, int port, String serverId) {
+        ServerInfo serverInfo = new ServerInfo(serverAddress, port, serverId);
+        serverCluster.put(serverId, serverInfo);
+        MCPSMod.LOGGER.info("Added server " + serverId + " to cluster: " + serverAddress + ":" + port);
+    }
+    
+    // 从集群移除服务器
+    public void removeServerFromCluster(String serverId) {
+        if (serverCluster.remove(serverId) != null) {
+            MCPSMod.LOGGER.info("Removed server " + serverId + " from cluster");
+        }
+    }
+    
+    // 同步服务器数据
+    public void syncServerData(String sourceServerId, String targetServerId, Object data) {
+        ServerInfo sourceServer = serverCluster.get(sourceServerId);
+        ServerInfo targetServer = serverCluster.get(targetServerId);
+        
+        if (sourceServer != null && targetServer != null) {
+            executorService.submit(() -> {
+                try {
+                    NetworkConnection connection = connect(targetServer.getAddress(), targetServer.getPort());
+                    if (connection != null) {
+                        NetworkMessage message = new NetworkMessage("SYNC_DATA", serialize(data));
+                        connection.sendMessage(message);
+                        disconnect(targetServer.getAddress(), targetServer.getPort());
+                    }
+                } catch (Exception e) {
+                    MCPSMod.LOGGER.error("Failed to sync data between servers: " + e.getMessage());
+                }
+            });
+        }
+    }
+    
+    // 预测元素行为
+    public void predictEntityBehavior(String entityId, Object currentState) {
+        predictionManager.predictEntityBehavior(entityId, currentState);
+    }
+    
+    // 获取预测的元素状态
+    public Object getPredictedEntityState(String entityId) {
+        return predictionManager.getPredictedEntityState(entityId);
+    }
+    
     // 关闭网络管理器
     public void shutdown() {
         if (udpSocket != null && !udpSocket.isClosed()) {
@@ -216,6 +298,8 @@ public class NetworkManager {
         private int retryCount;
         private String host;
         private int port;
+        private ConcurrentHashMap<Long, NetworkMessage> pendingMessages;
+        private AtomicLong messageId;
         
         public NetworkConnection(Socket socket) {
             this.socket = socket;
@@ -224,6 +308,8 @@ public class NetworkManager {
             this.retryCount = 0;
             this.host = socket.getInetAddress().getHostAddress();
             this.port = socket.getPort();
+            this.pendingMessages = new ConcurrentHashMap<>();
+            this.messageId = new AtomicLong(0);
         }
         
         public void enableAutoReconnect(int maxRetries) {
@@ -244,8 +330,18 @@ public class NetworkManager {
                     byte[] data = new byte[read];
                     System.arraycopy(buffer, 0, data, 0, read);
                     byte[] decompressed = decompressData(data, 0, read);
-                    String message = new String(decompressed);
-                    MCPSMod.LOGGER.debug("Received TCP message: " + message);
+                    
+                    // 解析消息
+                    try (ByteArrayInputStream bais = new ByteArrayInputStream(decompressed);
+                         ObjectInputStream ois = new ObjectInputStream(bais)) {
+                        NetworkMessage message = (NetworkMessage) ois.readObject();
+                        MCPSMod.LOGGER.debug("Received TCP message: " + message.getType());
+                        
+                        // 处理消息
+                        processMessage(message);
+                    }
+                    
+                    totalBytesReceived.addAndGet(data.length);
                 }
             } catch (Exception e) {
                 MCPSMod.LOGGER.error("Read loop error: " + e.getMessage());
@@ -262,6 +358,30 @@ public class NetworkManager {
         
         public void writeLoop() {
             // 实现写入逻辑
+        }
+        
+        public void sendMessage(NetworkMessage message) {
+            try {
+                byte[] data = serialize(message);
+                socket.getOutputStream().write(data);
+                socket.getOutputStream().flush();
+                totalBytesSent.addAndGet(data.length);
+            } catch (Exception e) {
+                MCPSMod.LOGGER.error("Failed to send message: " + e.getMessage());
+            }
+        }
+        
+        private void processMessage(NetworkMessage message) {
+            switch (message.getType()) {
+                case "SYNC_DATA":
+                    // 处理同步数据
+                    break;
+                case "PREDICTION":
+                    // 处理预测数据
+                    break;
+                default:
+                    MCPSMod.LOGGER.debug("Unknown message type: " + message.getType());
+            }
         }
         
         public void reconnect() {
@@ -293,29 +413,142 @@ public class NetworkManager {
         }
     }
     
+    // 带宽监控类
+    private class BandwidthMonitor {
+        private long lastBytesSent;
+        private long lastBytesReceived;
+        private long lastTimestamp;
+        
+        public void update(long bytesSent, long bytesReceived) {
+            long currentTime = System.currentTimeMillis();
+            if (lastTimestamp > 0) {
+                long timeDiff = currentTime - lastTimestamp;
+                if (timeDiff > 0) {
+                    double uploadSpeed = (bytesSent - lastBytesSent) / (timeDiff / 1000.0) / 1024.0;
+                    double downloadSpeed = (bytesReceived - lastBytesReceived) / (timeDiff / 1000.0) / 1024.0;
+                    MCPSMod.LOGGER.debug("Bandwidth: Upload " + String.format("%.2f", uploadSpeed) + " KB/s, Download " + String.format("%.2f", downloadSpeed) + " KB/s");
+                }
+            }
+            lastBytesSent = bytesSent;
+            lastBytesReceived = bytesReceived;
+            lastTimestamp = currentTime;
+        }
+        
+        public String getFormattedUsage() {
+            return String.format("Total: Sent %.2f MB, Received %.2f MB", totalBytesSent.get() / (1024.0 * 1024.0), totalBytesReceived.get() / (1024.0 * 1024.0));
+        }
+    }
+    
+    // 预测管理器类
+    private class PredictionManager {
+        private ConcurrentHashMap<String, EntityPrediction> entityPredictions;
+        
+        public PredictionManager() {
+            this.entityPredictions = new ConcurrentHashMap<>();
+        }
+        
+        public void predictEntityBehavior(String entityId, Object currentState) {
+            EntityPrediction prediction = new EntityPrediction(currentState);
+            entityPredictions.put(entityId, prediction);
+        }
+        
+        public Object getPredictedEntityState(String entityId) {
+            EntityPrediction prediction = entityPredictions.get(entityId);
+            return prediction != null ? prediction.getPredictedState() : null;
+        }
+        
+        private class EntityPrediction {
+            private Object currentState;
+            private Object predictedState;
+            private long timestamp;
+            
+            public EntityPrediction(Object currentState) {
+                this.currentState = currentState;
+                this.timestamp = System.currentTimeMillis();
+                this.predictedState = predictState(currentState);
+            }
+            
+            private Object predictState(Object currentState) {
+                // 简单的预测逻辑，实际应用中需要根据具体实体类型实现
+                return currentState;
+            }
+            
+            public Object getPredictedState() {
+                return predictedState;
+            }
+        }
+    }
+    
+    // 服务器信息类
+    private class ServerInfo {
+        private String address;
+        private int port;
+        private String serverId;
+        private long lastPing;
+        private boolean online;
+        
+        public ServerInfo(String address, int port, String serverId) {
+            this.address = address;
+            this.port = port;
+            this.serverId = serverId;
+            this.lastPing = System.currentTimeMillis();
+            this.online = true;
+        }
+        
+        public String getAddress() {
+            return address;
+        }
+        
+        public int getPort() {
+            return port;
+        }
+        
+        public String getServerId() {
+            return serverId;
+        }
+        
+        public boolean isOnline() {
+            return online;
+        }
+        
+        public void setOnline(boolean online) {
+            this.online = online;
+        }
+        
+        public void updateLastPing() {
+            this.lastPing = System.currentTimeMillis();
+        }
+    }
+    
     // 网络消息类
     public static class NetworkMessage implements Serializable {
         private static final long serialVersionUID = 1L;
         private String type;
-        private String content;
+        private Object content;
         private long timestamp;
+        private long messageId;
         
-        public NetworkMessage(String type, String content) {
+        public NetworkMessage(String type, Object content) {
             this.type = type;
             this.content = content;
             this.timestamp = System.currentTimeMillis();
+            this.messageId = System.nanoTime();
         }
         
         public String getType() {
             return type;
         }
         
-        public String getContent() {
+        public Object getContent() {
             return content;
         }
         
         public long getTimestamp() {
             return timestamp;
+        }
+        
+        public long getMessageId() {
+            return messageId;
         }
     }
 }
