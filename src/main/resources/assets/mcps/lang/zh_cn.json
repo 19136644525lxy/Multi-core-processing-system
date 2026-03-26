@@ -45,8 +45,6 @@
   "mcps.config.monitoring.open.tooltip": "点击后打开性能监控界面，查看当前游戏的线程、进程监控表，以及服务端的mspt和tps等数据",
   "mcps.monitoring.title": "多核心处理系统监控",
   "mcps.command.monitor.opening": "正在打开MCPS监控界面...",
-  "key.mcps.monitor": "打开监控界面",
-  "category.mcps": "多核心处理系统",
   "mcps.monitoring.header.metric": "性能指标",
   "mcps.monitoring.header.value": "当前值",
   "mcps.monitoring.metric.mspt": "MSPT",
@@ -143,5 +141,7 @@
   "mcps.screen.main_menu.task_scheduler": "任务调度可视化",
   "mcps.screen.main_menu.optimization_config": "优化配置",
   "mcps.screen.main_menu.close": "关闭",
-  "mcps.screen.main_menu.version": "版本: 1.0.0"
+  "mcps.screen.main_menu.version": "版本: 1.0.0",
+  "key.mcps.menu": "打开MCPS菜单",
+  "category.mcps": "MCPS"
 }

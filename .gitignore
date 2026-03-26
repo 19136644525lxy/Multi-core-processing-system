@@ -5,6 +5,7 @@ build/
 out/
 classes/
 gradle-7.5/
+gradle-7.5/lib/
 
 # eclipse
 

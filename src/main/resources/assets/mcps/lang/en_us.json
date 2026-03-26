@@ -45,8 +45,6 @@
   "mcps.config.monitoring.open.tooltip": "Click to open the performance monitoring screen, view current game thread and process monitoring table, as well as server mspt and tps data",
   "mcps.monitoring.title": "Multi-core Processing System Monitoring",
   "mcps.command.monitor.opening": "Opening MCPS monitoring screen...",
-  "key.mcps.monitor": "Open Monitoring Screen",
-  "category.mcps": "Multi-core Processing System",
   "mcps.monitoring.header.metric": "Performance Metric",
   "mcps.monitoring.header.value": "Current Value",
   "mcps.monitoring.metric.mspt": "MSPT",
@@ -143,5 +141,7 @@
   "mcps.screen.main_menu.task_scheduler": "Task Scheduler Visualizer",
   "mcps.screen.main_menu.optimization_config": "Optimization Configuration",
   "mcps.screen.main_menu.close": "Close",
-  "mcps.screen.main_menu.version": "Version: 1.0.0"
+  "mcps.screen.main_menu.version": "Version: 1.0.0",
+  "key.mcps.menu": "Open MCPS Menu",
+  "category.mcps": "MCPS"
 }
