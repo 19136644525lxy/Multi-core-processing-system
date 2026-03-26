@@ -22,11 +22,17 @@ import com.qituo.mcps.cluster.ClusterManager;
 import com.qituo.mcps.network.NetworkManager;
 import com.qituo.mcps.render.RenderManager;
 import com.qituo.mcps.storage.StorageManager;
+import com.qituo.mcps.api.APIDocumentation;
 import com.qituo.mcps.api.EventManager;
 import com.qituo.mcps.api.PluginManager;
 import com.qituo.mcps.cloud.CloudCommands;
 import com.qituo.mcps.cloud.CloudManager;
 import com.qituo.mcps.diagnostic.DiagnosticManager;
+import com.qituo.mcps.integration.CompatibilityTestTool;
+import com.qituo.mcps.integration.EcosystemCommands;
+import com.qituo.mcps.integration.IntegrationHelper;
+import com.qituo.mcps.integration.ModInteractionFramework;
+import com.qituo.mcps.integration.ModLoadingOptimizer;
 import com.qituo.mcps.platform.PlatformManager;
 import com.qituo.mcps.test.TestManager;
 
@@ -53,10 +59,15 @@ public class MCPSMod implements ModInitializer {
     private StorageManager storageManager;
     private EventManager eventManager;
     private PluginManager pluginManager;
+    private CloudManager cloudManager;
     private DiagnosticManager diagnosticManager;
     private PlatformManager platformManager;
     private TestManager testManager;
-    private CloudManager cloudManager;
+    private APIDocumentation apiDocumentation;
+    private CompatibilityTestTool compatibilityTestTool;
+    private IntegrationHelper integrationHelper;
+    private ModInteractionFramework modInteractionFramework;
+    private ModLoadingOptimizer modLoadingOptimizer;
     
     @Override
     public void onInitialize() {
@@ -145,10 +156,23 @@ public class MCPSMod implements ModInitializer {
         // 初始化游戏逻辑处理器
         gameLogicProcessor = new GameLogicParallelizer();
         
+        // 初始化模组生态系统
+        apiDocumentation = APIDocumentation.getInstance();
+        compatibilityTestTool = CompatibilityTestTool.getInstance();
+        integrationHelper = IntegrationHelper.getInstance();
+        modInteractionFramework = ModInteractionFramework.getInstance();
+        modLoadingOptimizer = ModLoadingOptimizer.getInstance();
+        
+        // 注册MCPS模组到交互框架
+        modInteractionFramework.registerMod(MOD_ID, "1.0.0", "Multi-core processing system for Minecraft");
+        
         // 命令已移除，使用按键绑定打开监控界面
         
         // 注册云备份命令
         CommandRegistrationCallback.EVENT.register(CloudCommands::register);
+        
+        // 注册生态系统命令
+        CommandRegistrationCallback.EVENT.register(EcosystemCommands::register);
         
         // 注册服务器生命周期事件
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {

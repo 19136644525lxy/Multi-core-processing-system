@@ -82,5 +82,13 @@
   "mcps.command.cloud.performance.status.success": "Performance status retrieved successfully",
   "mcps.command.cloud.performance.status.failure": "Failed to retrieve performance status",
   "mcps.command.cloud.resource.status.success": "Resource status retrieved successfully",
-  "mcps.command.cloud.resource.status.failure": "Failed to retrieve resource status"
+  "mcps.command.cloud.resource.status.failure": "Failed to retrieve resource status",
+  "mcps.command.ecosystem.api.generate.success": "API documentation generated successfully",
+  "mcps.command.ecosystem.api.list.header": "Registered API classes:",
+  "mcps.command.ecosystem.compatibility.test.start": "Starting compatibility tests...",
+  "mcps.command.ecosystem.compatibility.test.complete": "Compatibility tests completed",
+  "mcps.command.ecosystem.compatibility.report.start": "Generating compatibility report...",
+  "mcps.command.ecosystem.compatibility.report.complete": "Compatibility report generated",
+  "mcps.command.ecosystem.mods.list.header": "Registered mods:",
+  "mcps.command.ecosystem.mods.info.not_found": "Mod not found"
 }

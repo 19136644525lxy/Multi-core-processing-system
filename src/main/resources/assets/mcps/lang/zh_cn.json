@@ -82,5 +82,13 @@
   "mcps.command.cloud.performance.status.success": "性能状态获取成功",
   "mcps.command.cloud.performance.status.failure": "性能状态获取失败",
   "mcps.command.cloud.resource.status.success": "资源状态获取成功",
-  "mcps.command.cloud.resource.status.failure": "资源状态获取失败"
+  "mcps.command.cloud.resource.status.failure": "资源状态获取失败",
+  "mcps.command.ecosystem.api.generate.success": "API文档生成成功",
+  "mcps.command.ecosystem.api.list.header": "已注册的API类:",
+  "mcps.command.ecosystem.compatibility.test.start": "开始兼容性测试...",
+  "mcps.command.ecosystem.compatibility.test.complete": "兼容性测试完成",
+  "mcps.command.ecosystem.compatibility.report.start": "生成兼容性报告...",
+  "mcps.command.ecosystem.compatibility.report.complete": "兼容性报告生成完成",
+  "mcps.command.ecosystem.mods.list.header": "已注册的模组:",
+  "mcps.command.ecosystem.mods.info.not_found": "模组未找到"
 }
