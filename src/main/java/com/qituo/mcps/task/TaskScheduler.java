@@ -63,6 +63,14 @@ public class TaskScheduler {
     }
     
     public int scheduleTask(String queueName, Runnable task, String taskName) {
+        return scheduleTask(queueName, task, taskName, 5); // 默认优先级5
+    }
+    
+    public int scheduleTask(String queueName, Runnable task) {
+        return scheduleTask(queueName, task, "unnamed", 5); // 默认优先级5
+    }
+    
+    public int scheduleTask(String queueName, Runnable task, String taskName, int priority) {
         TaskQueue queue = taskQueues.get(queueName);
         if (queue == null) {
             MCPSMod.LOGGER.warn("Task queue not found: " + queueName);
@@ -70,17 +78,17 @@ public class TaskScheduler {
         }
         
         int taskId = taskIdGenerator.incrementAndGet();
-        ScheduledTask scheduledTask = new ScheduledTask(taskId, taskName, task);
+        ScheduledTask scheduledTask = new ScheduledTask(taskId, taskName, task, priority);
         queue.offer(scheduledTask);
         
         return taskId;
     }
     
-    public int scheduleTask(String queueName, Runnable task) {
-        return scheduleTask(queueName, task, "unnamed");
+    public <T> Future<T> scheduleTaskWithResult(String queueName, Callable<T> task, String taskName) {
+        return scheduleTaskWithResult(queueName, task, taskName, 5); // 默认优先级5
     }
     
-    public <T> Future<T> scheduleTaskWithResult(String queueName, Callable<T> task, String taskName) {
+    public <T> Future<T> scheduleTaskWithResult(String queueName, Callable<T> task, String taskName, int priority) {
         TaskQueue queue = taskQueues.get(queueName);
         if (queue == null) {
             MCPSMod.LOGGER.warn("Task queue not found: " + queueName);
@@ -98,7 +106,7 @@ public class TaskScheduler {
                 future.completeExceptionally(e);
                 MCPSMod.LOGGER.error("Error executing task: " + taskName, e);
             }
-        });
+        }, priority);
         
         queue.offer(scheduledTask);
         return future;
@@ -123,7 +131,8 @@ public class TaskScheduler {
         
         public TaskQueue(String name) {
             this.name = name;
-            this.queue = new LinkedBlockingQueue<>();
+            // 使用优先级队列，按照任务优先级排序
+            this.queue = new PriorityBlockingQueue<ScheduledTask>(11, (t1, t2) -> Integer.compare(t2.getPriority(), t1.getPriority()));
         }
         
         public String getName() {
@@ -143,15 +152,21 @@ public class TaskScheduler {
         }
     }
     
-    private static class ScheduledTask {
+    private static class ScheduledTask implements Comparable<ScheduledTask> {
         private final int id;
         private final String name;
         private final Runnable task;
+        private final int priority;
         
         public ScheduledTask(int id, String name, Runnable task) {
+            this(id, name, task, 5); // 默认优先级5
+        }
+        
+        public ScheduledTask(int id, String name, Runnable task, int priority) {
             this.id = id;
             this.name = name;
             this.task = task;
+            this.priority = priority;
         }
         
         public int getId() {
@@ -162,8 +177,23 @@ public class TaskScheduler {
             return name;
         }
         
+        public int getPriority() {
+            return priority;
+        }
+        
         public void execute() {
             task.run();
+        }
+        
+        @Override
+        public int compareTo(ScheduledTask other) {
+            // 按优先级降序排序
+            int priorityCompare = Integer.compare(other.priority, this.priority);
+            if (priorityCompare != 0) {
+                return priorityCompare;
+            }
+            // 优先级相同时，按任务ID升序排序
+            return Integer.compare(this.id, other.id);
         }
     }
 }

@@ -132,7 +132,96 @@ public class OptimizationSuggestionSystem {
             MCPSMod.LOGGER.info(suggestion.toString());
         }
         
-        MCPSMod.LOGGER.info("================================");
+        MCPSMod.LOGGER.info("=============================");
+        
+        // 生成优化建议JSON文件
+        generateSuggestionsJSON();
+    }
+    
+    private void generateSuggestionsJSON() {
+        try {
+            // 创建suggestions目录
+            File suggestionsDir = new File(configDirectory + File.separator + "suggestions");
+            if (!suggestionsDir.exists()) {
+                suggestionsDir.mkdirs();
+            }
+            
+            // 生成内存优化建议JSON
+            StringBuilder memoryJson = new StringBuilder();
+            memoryJson.append("{\n  \"suggestions\": [");
+            
+            boolean first = true;
+            for (OptimizationSuggestion suggestion : suggestions) {
+                if (suggestion.getCategory().equals("Memory")) {
+                    if (!first) memoryJson.append(",");
+                    memoryJson.append("\n    {\n      \"description\": \"" + suggestion.getDescription() + "\",\n      \"priority\": " + suggestion.getPriority() + ",\n      \"priority_level\": \"" + suggestion.getPriorityLevel() + "\"\n    }");
+                    first = false;
+                }
+            }
+            
+            memoryJson.append("\n  ]\n}");
+            
+            Path memoryPath = Paths.get(configDirectory, "suggestions", "memory_suggestions.json");
+            Files.write(memoryPath, memoryJson.toString().getBytes());
+            
+            // 生成性能优化建议JSON
+            StringBuilder performanceJson = new StringBuilder();
+            performanceJson.append("{\n  \"suggestions\": [");
+            
+            first = true;
+            for (OptimizationSuggestion suggestion : suggestions) {
+                if (suggestion.getCategory().equals("CPU")) {
+                    if (!first) performanceJson.append(",");
+                    performanceJson.append("\n    {\n      \"description\": \"" + suggestion.getDescription() + "\",\n      \"priority\": " + suggestion.getPriority() + ",\n      \"priority_level\": \"" + suggestion.getPriorityLevel() + "\"\n    }");
+                    first = false;
+                }
+            }
+            
+            performanceJson.append("\n  ]\n}");
+            
+            Path performancePath = Paths.get(configDirectory, "suggestions", "performance_suggestions.json");
+            Files.write(performancePath, performanceJson.toString().getBytes());
+            
+            // 生成硬件优化建议JSON
+            StringBuilder hardwareJson = new StringBuilder();
+            hardwareJson.append("{\n  \"suggestions\": [");
+            
+            first = true;
+            for (OptimizationSuggestion suggestion : suggestions) {
+                if (suggestion.getCategory().equals("CPU") || suggestion.getCategory().equals("Memory")) {
+                    if (!first) hardwareJson.append(",");
+                    hardwareJson.append("\n    {\n      \"category\": \"" + suggestion.getCategory() + "\",\n      \"description\": \"" + suggestion.getDescription() + "\",\n      \"priority\": " + suggestion.getPriority() + ",\n      \"priority_level\": \"" + suggestion.getPriorityLevel() + "\"\n    }");
+                    first = false;
+                }
+            }
+            
+            hardwareJson.append("\n  ]\n}");
+            
+            Path hardwarePath = Paths.get(configDirectory, "suggestions", "hardware_suggestions.json");
+            Files.write(hardwarePath, hardwareJson.toString().getBytes());
+            
+            // 生成游戏内容优化建议JSON
+            StringBuilder gameContentJson = new StringBuilder();
+            gameContentJson.append("{\n  \"suggestions\": [");
+            
+            first = true;
+            for (OptimizationSuggestion suggestion : suggestions) {
+                if (suggestion.getCategory().equals("Game Content")) {
+                    if (!first) gameContentJson.append(",");
+                    gameContentJson.append("\n    {\n      \"description\": \"" + suggestion.getDescription() + "\",\n      \"priority\": " + suggestion.getPriority() + ",\n      \"priority_level\": \"" + suggestion.getPriorityLevel() + "\"\n    }");
+                    first = false;
+                }
+            }
+            
+            gameContentJson.append("\n  ]\n}");
+            
+            Path gameContentPath = Paths.get(configDirectory, "suggestions", "game_content_suggestions.json");
+            Files.write(gameContentPath, gameContentJson.toString().getBytes());
+            
+            MCPSMod.LOGGER.info("Optimization suggestions JSON files generated in: " + suggestionsDir.getAbsolutePath());
+        } catch (IOException e) {
+            MCPSMod.LOGGER.error("Error generating optimization suggestions JSON files: " + e.getMessage());
+        }
     }
     
     public List<OptimizationSuggestion> getSuggestions() {
