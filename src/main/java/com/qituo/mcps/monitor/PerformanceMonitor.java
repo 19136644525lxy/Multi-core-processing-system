@@ -6,9 +6,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import com.qituo.mcps.core.MCPSMod;
 import com.qituo.mcps.thread.ThreadManager;
 import com.qituo.mcps.gpu.GPUManager;
+import com.qituo.mcps.task.TaskScheduler;
 
 public class PerformanceMonitor {
     private ScheduledExecutorService scheduler;
@@ -22,6 +25,26 @@ public class PerformanceMonitor {
     private ConcurrentHashMap<Integer, AtomicLong> gpuJobs;
     private AtomicLong totalGpuExecutionTime;
     private AtomicLong totalGpuJobs;
+    
+    // 新增：任务队列监控
+    private ConcurrentHashMap<String, AtomicLong> queueSizes;
+    private ConcurrentHashMap<String, AtomicLong> queueProcessingTimes;
+    
+    // 新增：系统负载监控
+    private AtomicLong systemLoad;
+    private AtomicLong cpuUsage;
+    
+    // 新增：网络性能监控
+    private AtomicLong networkBytesSent;
+    private AtomicLong networkBytesReceived;
+    private AtomicLong networkPacketsSent;
+    private AtomicLong networkPacketsReceived;
+    
+    // 新增：存储性能监控
+    private AtomicLong storageReadBytes;
+    private AtomicLong storageWriteBytes;
+    private AtomicLong storageReadOperations;
+    private AtomicLong storageWriteOperations;
     
     public void initialize() {
         scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
@@ -41,6 +64,20 @@ public class PerformanceMonitor {
         totalGpuExecutionTime = new AtomicLong(0);
         totalGpuJobs = new AtomicLong(0);
         
+        // 初始化新增的性能指标
+        queueSizes = new ConcurrentHashMap<>();
+        queueProcessingTimes = new ConcurrentHashMap<>();
+        systemLoad = new AtomicLong(0);
+        cpuUsage = new AtomicLong(0);
+        networkBytesSent = new AtomicLong(0);
+        networkBytesReceived = new AtomicLong(0);
+        networkPacketsSent = new AtomicLong(0);
+        networkPacketsReceived = new AtomicLong(0);
+        storageReadBytes = new AtomicLong(0);
+        storageWriteBytes = new AtomicLong(0);
+        storageReadOperations = new AtomicLong(0);
+        storageWriteOperations = new AtomicLong(0);
+        
         // 每秒钟打印一次性能指标
         scheduler.scheduleAtFixedRate(this::printMetrics, 1, 1, TimeUnit.SECONDS);
         
@@ -49,6 +86,12 @@ public class PerformanceMonitor {
         
         // 每10秒打印一次GPU性能指标
         scheduler.scheduleAtFixedRate(this::printGpuMetrics, 10, 10, TimeUnit.SECONDS);
+        
+        // 每5秒打印一次任务队列性能指标
+        scheduler.scheduleAtFixedRate(this::printQueueMetrics, 5, 5, TimeUnit.SECONDS);
+        
+        // 每10秒打印一次系统性能指标
+        scheduler.scheduleAtFixedRate(this::printSystemMetrics, 10, 10, TimeUnit.SECONDS);
         
         MCPSMod.LOGGER.info("PerformanceMonitor initialized");
     }
@@ -102,6 +145,62 @@ public class PerformanceMonitor {
         totalGpuJobs.addAndGet(count);
     }
     
+    // 记录任务队列性能指标
+    public void recordQueueSize(String queueName, int size) {
+        queueSizes.computeIfAbsent(queueName, k -> new AtomicLong(0)).set(size);
+    }
+    
+    public void recordQueueProcessingTime(String queueName, long time) {
+        queueProcessingTimes.computeIfAbsent(queueName, k -> new AtomicLong(0)).addAndGet(time);
+    }
+    
+    // 记录系统负载和CPU使用率
+    public void recordSystemLoad(double load) {
+        // 将double转换为long存储（乘以10000以保留4位小数）
+        long value = (long)(load * 10000);
+        systemLoad.set(value);
+    }
+    
+    public void recordCpuUsage(double usage) {
+        // 将double转换为long存储（乘以10000以保留4位小数）
+        long value = (long)(usage * 10000);
+        cpuUsage.set(value);
+    }
+    
+    // 记录网络性能指标
+    public void recordNetworkBytesSent(long bytes) {
+        networkBytesSent.addAndGet(bytes);
+    }
+    
+    public void recordNetworkBytesReceived(long bytes) {
+        networkBytesReceived.addAndGet(bytes);
+    }
+    
+    public void recordNetworkPacketsSent(long packets) {
+        networkPacketsSent.addAndGet(packets);
+    }
+    
+    public void recordNetworkPacketsReceived(long packets) {
+        networkPacketsReceived.addAndGet(packets);
+    }
+    
+    // 记录存储性能指标
+    public void recordStorageReadBytes(long bytes) {
+        storageReadBytes.addAndGet(bytes);
+    }
+    
+    public void recordStorageWriteBytes(long bytes) {
+        storageWriteBytes.addAndGet(bytes);
+    }
+    
+    public void recordStorageReadOperations(long operations) {
+        storageReadOperations.addAndGet(operations);
+    }
+    
+    public void recordStorageWriteOperations(long operations) {
+        storageWriteOperations.addAndGet(operations);
+    }
+    
     private void printMetrics() {
         StringBuilder sb = new StringBuilder();
         sb.append("[MCPS Performance]");
@@ -144,10 +243,59 @@ public class PerformanceMonitor {
         }
     }
     
+    // 打印任务队列性能指标
+    private void printQueueMetrics() {
+        if (!queueSizes.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[MCPS Queue Performance]");
+            
+            for (Map.Entry<String, AtomicLong> entry : queueSizes.entrySet()) {
+                String queueName = entry.getKey();
+                long size = entry.getValue().get();
+                long processingTime = queueProcessingTimes.getOrDefault(queueName, new AtomicLong(0)).get();
+                
+                sb.append(" " + queueName + ": size=" + size + ", processingTime=" + processingTime + "ms");
+            }
+            
+            MCPSMod.LOGGER.info(sb.toString());
+        }
+    }
+    
+    // 打印系统性能指标
+    private void printSystemMetrics() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[MCPS System Performance]");
+        
+        // 系统负载和CPU使用率
+        double load = systemLoad.get() / 10000.0;
+        double cpu = cpuUsage.get() / 10000.0;
+        sb.append(" Load: " + String.format("%.2f%%", load) + ", CPU: " + String.format("%.2f%%", cpu));
+        
+        // 网络性能
+        sb.append(" Network: sent=" + (networkBytesSent.get() / 1024) + "KB, received=" + (networkBytesReceived.get() / 1024) + "KB");
+        sb.append(" Packets: sent=" + networkPacketsSent.get() + ", received=" + networkPacketsReceived.get());
+        
+        // 存储性能
+        sb.append(" Storage: read=" + (storageReadBytes.get() / 1024) + "KB, write=" + (storageWriteBytes.get() / 1024) + "KB");
+        sb.append(" Operations: read=" + storageReadOperations.get() + ", write=" + storageWriteOperations.get());
+        
+        MCPSMod.LOGGER.info(sb.toString());
+        
+        // 重置网络和存储指标
+        networkBytesSent.set(0);
+        networkBytesReceived.set(0);
+        networkPacketsSent.set(0);
+        networkPacketsReceived.set(0);
+        storageReadBytes.set(0);
+        storageWriteBytes.set(0);
+        storageReadOperations.set(0);
+        storageWriteOperations.set(0);
+    }
+    
     public void logPerformanceSnapshot() {
         ThreadManager threadManager = MCPSMod.getInstance().getThreadManager();
         if (threadManager != null) {
-            MCPSMod.LOGGER.info("[MCPS Snapshot] Threads: " + threadManager.getCorePoolSize() + ", Active tasks: " + threadManager.getActiveTaskCount() + ", Queue size: " + threadManager.getQueueSize());
+            MCPSMod.LOGGER.info("[MCPS Snapshot] Threads: " + threadManager.getCorePoolSize() + ", Active tasks: " + threadManager.getActiveTaskCount() + ", Queue size: " + threadManager.getQueueSize() + ", Energy saving mode: " + threadManager.isEnergySavingMode());
         }
         
         // 打印GPU状态
@@ -156,6 +304,38 @@ public class PerformanceMonitor {
             Map<String, Object> gpuStats = gpuManager.getGpuPerformanceStats();
             MCPSMod.LOGGER.info("[MCPS GPU Snapshot] " + gpuStats);
         }
+        
+        // 打印系统负载
+        MCPSMod.LOGGER.info("[MCPS Snapshot] MSPT: " + String.format("%.2f", getMspt()) + ", TPS: " + getTps());
+        
+        // 打印内存使用情况
+        Runtime runtime = Runtime.getRuntime();
+        long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
+        long totalMemory = runtime.totalMemory() / (1024 * 1024);
+        long maxMemory = runtime.maxMemory() / (1024 * 1024);
+        MCPSMod.LOGGER.info("[MCPS Snapshot] Memory: " + usedMemory + "MB / " + totalMemory + "MB (max: " + maxMemory + "MB)");
+        
+        // 打印任务队列状态
+        if (!queueSizes.isEmpty()) {
+            StringBuilder sb = new StringBuilder("[MCPS Queue Snapshot]");
+            for (Map.Entry<String, AtomicLong> entry : queueSizes.entrySet()) {
+                String queueName = entry.getKey();
+                long size = entry.getValue().get();
+                sb.append(" " + queueName + ": " + size);
+            }
+            MCPSMod.LOGGER.info(sb.toString());
+        }
+        
+        // 打印系统性能状态
+        double load = systemLoad.get() / 10000.0;
+        double cpu = cpuUsage.get() / 10000.0;
+        MCPSMod.LOGGER.info("[MCPS System Snapshot] Load: " + String.format("%.2f%%", load) + ", CPU: " + String.format("%.2f%%", cpu));
+        
+        // 打印网络性能状态
+        MCPSMod.LOGGER.info("[MCPS Network Snapshot] Sent: " + (networkBytesSent.get() / 1024) + "KB, Received: " + (networkBytesReceived.get() / 1024) + "KB");
+        
+        // 打印存储性能状态
+        MCPSMod.LOGGER.info("[MCPS Storage Snapshot] Read: " + (storageReadBytes.get() / 1024) + "KB, Write: " + (storageWriteBytes.get() / 1024) + "KB");
     }
     
     private void updateMsptAndTps() {

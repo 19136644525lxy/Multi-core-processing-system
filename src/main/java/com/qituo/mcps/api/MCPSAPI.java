@@ -10,6 +10,12 @@ import com.qituo.mcps.storage.StorageManager;
 import com.qituo.mcps.ai.AIManager;
 import com.qituo.mcps.gpu.GPUManager;
 import com.qituo.mcps.cluster.ClusterManager;
+import com.qituo.mcps.monitor.PerformanceMonitor;
+import com.qituo.mcps.cloud.CloudManager;
+import com.qituo.mcps.diagnostic.DiagnosticManager;
+import com.qituo.mcps.diagnostic.RealTimePerformanceAnalyzer;
+import com.qituo.mcps.diagnostic.BottleneckDetector;
+import com.qituo.mcps.diagnostic.OptimizationSuggestionSystem;
 
 public class MCPSAPI {
     private static MCPSAPI instance;
@@ -81,5 +87,80 @@ public class MCPSAPI {
     // 注册插件
     public void registerPlugin(MCPSPlugin plugin) {
         MCPSMod.getInstance().getPluginManager().registerPlugin(plugin);
+    }
+    
+    // 获取性能监控器
+    public PerformanceMonitor getPerformanceMonitor() {
+        return MCPSMod.getInstance().getPerformanceMonitor();
+    }
+    
+    // 获取云管理器
+    public CloudManager getCloudManager() {
+        return MCPSMod.getInstance().getCloudManager();
+    }
+    
+    // 获取诊断管理器
+    public DiagnosticManager getDiagnosticManager() {
+        return MCPSMod.getInstance().getDiagnosticManager();
+    }
+    
+    // 获取实时性能分析器
+    public RealTimePerformanceAnalyzer getPerformanceAnalyzer() {
+        return RealTimePerformanceAnalyzer.getInstance();
+    }
+    
+    // 获取瓶颈检测器
+    public BottleneckDetector getBottleneckDetector() {
+        return BottleneckDetector.getInstance();
+    }
+    
+    // 获取优化建议系统
+    public OptimizationSuggestionSystem getOptimizationSuggestionSystem() {
+        return OptimizationSuggestionSystem.getInstance();
+    }
+    
+    // 执行性能分析
+    public void analyzePerformance() {
+        RealTimePerformanceAnalyzer.getInstance().analyze();
+    }
+    
+    // 检测瓶颈
+    public void detectBottlenecks() {
+        BottleneckDetector.getInstance().detectBottlenecks();
+    }
+    
+    // 生成优化建议
+    public void generateOptimizationSuggestions() {
+        OptimizationSuggestionSystem.getInstance().generateSuggestions();
+    }
+    
+    // 执行备份
+    public void performBackup() {
+        MCPSMod.getInstance().getCloudManager().getBackupManager().performBackup();
+    }
+    
+    // 执行手动备份
+    public void performManualBackup() {
+        MCPSMod.getInstance().getCloudManager().getBackupManager().performManualBackup();
+    }
+    
+    // 执行增量备份
+    public void performIncrementalBackup(String baseBackupId) {
+        MCPSMod.getInstance().getCloudManager().getBackupManager().performIncrementalBackup(baseBackupId);
+    }
+    
+    // 从备份恢复
+    public void restoreFromBackup(String backupId) {
+        MCPSMod.getInstance().getCloudManager().getBackupManager().restoreFromBackup(backupId);
+    }
+    
+    // 验证备份
+    public boolean verifyBackup(String backupId) {
+        return MCPSMod.getInstance().getCloudManager().getBackupManager().verifyBackup(backupId);
+    }
+    
+    // 请求资源
+    public void requestResources(String requestId, int cpuRequired, long memoryRequired, long diskRequired) {
+        MCPSMod.getInstance().getCloudManager().getResourcePoolManager().requestResources(requestId, cpuRequired, memoryRequired, diskRequired);
     }
 }

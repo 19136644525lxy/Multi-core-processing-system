@@ -49,11 +49,16 @@ public class SmartTaskScheduler extends TaskScheduler {
     public int scheduleTask(String queueName, Runnable task, String taskName) {
         // 动态调整任务分配
         String optimalQueue = selectOptimalQueue(queueName);
-        int taskId = super.scheduleTask(optimalQueue, task, taskName);
+        
+        // 计算任务优先级
+        int priority = calculateTaskPriority(optimalQueue, taskName);
+        
+        // 调度任务
+        int taskId = super.scheduleTask(optimalQueue, task, taskName, priority);
         
         // 预测任务执行时间
         long predictedTime = predictTaskExecutionTime(optimalQueue);
-        MCPSMod.LOGGER.debug("Scheduled task '" + taskName + "' to queue '" + optimalQueue + "' with predicted execution time: " + predictedTime + "ms");
+        MCPSMod.LOGGER.debug("Scheduled task '" + taskName + "' to queue '" + optimalQueue + "' with priority " + priority + " and predicted execution time: " + predictedTime + "ms");
         
         return taskId;
     }
@@ -62,13 +67,64 @@ public class SmartTaskScheduler extends TaskScheduler {
     public <T> Future<T> scheduleTaskWithResult(String queueName, Callable<T> task, String taskName) {
         // 动态调整任务分配
         String optimalQueue = selectOptimalQueue(queueName);
-        Future<T> future = super.scheduleTaskWithResult(optimalQueue, task, taskName);
+        
+        // 计算任务优先级
+        int priority = calculateTaskPriority(optimalQueue, taskName);
+        
+        // 调度任务
+        Future<T> future = super.scheduleTaskWithResult(optimalQueue, task, taskName, priority);
         
         // 预测任务执行时间
         long predictedTime = predictTaskExecutionTime(optimalQueue);
-        MCPSMod.LOGGER.debug("Scheduled task '" + taskName + "' to queue '" + optimalQueue + "' with predicted execution time: " + predictedTime + "ms");
+        MCPSMod.LOGGER.debug("Scheduled task '" + taskName + "' to queue '" + optimalQueue + "' with priority " + priority + " and predicted execution time: " + predictedTime + "ms");
         
         return future;
+    }
+    
+    // 计算任务优先级
+    private int calculateTaskPriority(String queueName, String taskName) {
+        // 基础优先级
+        int basePriority = 5;
+        
+        // 根据队列类型调整优先级
+        switch (queueName) {
+            case "entity_ai":
+                basePriority = 7; // 实体AI优先级较高
+                break;
+            case "redstone":
+                basePriority = 6; // 红石优先级中等偏高
+                break;
+            case "world_generation":
+                basePriority = 4; // 世界生成优先级中等
+                break;
+            case "block_updates":
+                basePriority = 5; // 方块更新优先级中等
+                break;
+            case "pathfinding":
+                basePriority = 6; // 寻路优先级中等偏高
+                break;
+        }
+        
+        // 根据任务名称调整优先级
+        if (taskName.contains("critical")) {
+            basePriority += 3; // 关键任务优先级更高
+        } else if (taskName.contains("high")) {
+            basePriority += 2; // 高优先级任务
+        } else if (taskName.contains("low")) {
+            basePriority -= 2; // 低优先级任务
+        }
+        
+        // 根据系统负载调整优先级
+        double systemLoad = calculateSystemLoad();
+        if (systemLoad > 0.8) {
+            // 系统负载高，提高关键任务的优先级
+            if (basePriority > 5) {
+                basePriority += 1;
+            }
+        }
+        
+        // 确保优先级在合理范围内
+        return Math.max(1, Math.min(10, basePriority));
     }
 
     // 分析性能数据
@@ -280,9 +336,67 @@ public class SmartTaskScheduler extends TaskScheduler {
             return queueSizeHistory.getLast();
         }
 
-        // 预测任务执行时间（简单的移动平均）
+        // 预测任务执行时间（使用线性回归模型）
         public long predictExecutionTime() {
-            return getAverageExecutionTime();
+            if (executionTimes.isEmpty()) {
+                return 100; // 默认值
+            }
+            
+            // 如果历史数据较少，使用加权移动平均
+            if (executionTimes.size() < 5) {
+                // 使用加权移动平均，最近的执行时间权重更高
+                double weight = 0.5; // 最近时间的权重
+                double weightedSum = 0;
+                double weightSum = 0;
+                
+                int i = 0;
+                for (Long time : executionTimes) {
+                    double currentWeight = Math.pow(weight, i);
+                    weightedSum += time * currentWeight;
+                    weightSum += currentWeight;
+                    i++;
+                }
+                
+                return (long) (weightedSum / weightSum);
+            }
+            
+            // 使用线性回归模型预测
+            return predictWithLinearRegression();
+        }
+        
+        // 使用线性回归模型预测任务执行时间
+        private long predictWithLinearRegression() {
+            int n = executionTimes.size();
+            if (n < 2) {
+                return getAverageExecutionTime();
+            }
+            
+            // 准备数据
+            double[] x = new double[n];
+            double[] y = new double[n];
+            
+            for (int i = 0; i < n; i++) {
+                x[i] = i; // 时间索引
+                y[i] = executionTimes.get(i); // 执行时间
+            }
+            
+            // 计算线性回归系数
+            double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+            for (int i = 0; i < n; i++) {
+                sumX += x[i];
+                sumY += y[i];
+                sumXY += x[i] * y[i];
+                sumX2 += x[i] * x[i];
+            }
+            
+            double slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            double intercept = (sumY - slope * sumX) / n;
+            
+            // 预测下一个任务的执行时间
+            double predictedTime = slope * n + intercept;
+            
+            // 确保预测值为正数
+            return (long) Math.max(1, predictedTime);
         }
 
         // 预测队列大小（简单的移动平均）

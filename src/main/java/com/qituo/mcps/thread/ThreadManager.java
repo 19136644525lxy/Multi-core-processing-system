@@ -388,6 +388,16 @@ public class ThreadManager {
         }
     }
     
+    // 获取线程池利用率
+    public double getThreadPoolUtilization() {
+        int currentPoolSize = executorService.getPoolSize();
+        if (currentPoolSize == 0) {
+            return 0.0;
+        }
+        int activeThreads = executorService.getActiveCount();
+        return (double) activeThreads / currentPoolSize;
+    }
+    
     // 优先级任务类
     public static class PrioritizedTask implements Runnable, Comparable<PrioritizedTask> {
         private final Runnable task;
